@@ -22,24 +22,6 @@ namespace Eobw.BlueskySharp
             private set;
         }
 
-        ///// <summary>
-        ///// Gets the user handle.
-        ///// </summary>
-        //public string Handle
-        //{
-        //    get;
-        //    private set;
-        //}
-
-        ///// <summary>
-        ///// Gets the password.
-        ///// </summary>
-        //public string Password
-        //{
-        //    get;
-        //    private set;
-        //}
-
         /// <summary>
         /// Gets the prefix for HTTP.
         /// </summary>
@@ -63,15 +45,11 @@ namespace Eobw.BlueskySharp
         /// Initializes a new instance of the <see cref="BlueskyInstanceInfo"/> class from the specified Bluesky instance informations.
         /// </summary>
         /// <param name="instanceDomain">Domain of the instance (ex: "bsky.social")</param>
-        /// <param name="handle">User handle (ex: "contoso.bsky.social")</param>
-        /// <param name="password">Password</param>
-        public BlueskyInstanceInfo(string instanceDomain, string handle, string password)
+        public BlueskyInstanceInfo(string instanceDomain)
         {
             this._allowedUriPrefixes = new string[] { "https", "http" };
 
             this.InstanceDomain = instanceDomain;
-            //this.Handle = handle;
-            //this.Password = password;
 
             this.InstanceUriPrefix = this._allowedUriPrefixes[0];
             this.InstanceApiEndpointRoot = "xrpc";
@@ -81,27 +59,9 @@ namespace Eobw.BlueskySharp
         /// Initializes a new instance of the <see cref="BlueskyInstanceInfo"/> class.
         /// </summary>
         public BlueskyInstanceInfo()
-            : this(String.Empty, String.Empty, String.Empty)
+            : this(String.Empty)
         {
             // NOP
-        }
-
-
-        private string _buildUriStr()
-        {
-            var sb = new StringBuilder();
-            
-            sb.Append(this.InstanceUriPrefix);
-            sb.Append("://");
-            sb.Append(this.InstanceDomain);
-            
-            if (String.IsNullOrEmpty(this.InstanceApiEndpointRoot) == false)
-            {
-                sb.Append("/");
-                sb.Append(this.InstanceApiEndpointRoot);
-            }
-
-            return sb.ToString();
         }
 
 
@@ -115,28 +75,6 @@ namespace Eobw.BlueskySharp
             this.InstanceDomain = instanceDomain;
             return this;
         }
-
-        ///// <summary>
-        ///// Sets the user handle. (ex: "contoso.bsky.social")
-        ///// </summary>
-        ///// <param name="handle">User handle (ex: "contoso.bsky.social")</param>
-        ///// <returns>Instance of the <see cref="BlueskyConnectionInfo"/> class</returns>
-        //public BlueskyConnectionInfo SetHandle(string handle)
-        //{
-        //    this.Handle = handle;
-        //    return this;
-        //}
-
-        ///// <summary>
-        ///// Sets the password.
-        ///// </summary>
-        ///// <param name="password">Password</param>
-        ///// <returns>Instance of the <see cref="BlueskyConnectionInfo"/> class</returns>
-        //public BlueskyConnectionInfo SetPassword(string password)
-        //{
-        //    this.Password = password;
-        //    return this;
-        //}
 
         /// <summary>
         /// Sets the prefix for HTTP.
@@ -170,21 +108,40 @@ namespace Eobw.BlueskySharp
         }
 
         /// <summary>
-        /// Verifies if sufficient information has been configured to connect to Bluesky.
+        /// Verifies if sufficient information has been configured to connect to Bluesky server.
         /// </summary>
         /// <returns>The result of the verification.</returns>
         public bool IsValid()
         {
-            if (String.IsNullOrEmpty(this.InstanceDomain)) //||
-                //String.IsNullOrEmpty(this.Handle) ||
-                //String.IsNullOrEmpty(this.Password))
+            if (String.IsNullOrEmpty(this.InstanceDomain))
             {
                 return false;
             }
 
-            var uriStr = this._buildUriStr();
+            var uriStr = this.BuildEndpointRootUri();
             Uri uri;
             return Uri.TryCreate(uriStr, UriKind.Absolute, out uri);
+        }
+
+        /// <summary>
+        /// Builds the root URI of the endpoint.
+        /// </summary>
+        /// <returns>Root URI of the endpoint (ex: https://bsky.social/xrpc)</returns>
+        public string BuildEndpointRootUri()
+        {
+            var sb = new StringBuilder();
+
+            sb.Append(this.InstanceUriPrefix);
+            sb.Append("://");
+            sb.Append(this.InstanceDomain);
+
+            if (String.IsNullOrEmpty(this.InstanceApiEndpointRoot) == false)
+            {
+                sb.Append("/");
+                sb.Append(this.InstanceApiEndpointRoot);
+            }
+
+            return sb.ToString();
         }
     }
 }

@@ -36,6 +36,9 @@ namespace Eobw.BlueskySharp
             this.Password = password;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BlueskyLegacyAuthenticationInfo"/> class.
+        /// </summary>
         public BlueskyLegacyAuthenticationInfo()
             : this(String.Empty, String.Empty)
         {
@@ -63,6 +66,17 @@ namespace Eobw.BlueskySharp
         {
             this.Password = password;
             return this;
+        }
+
+        /// <summary>
+        /// Verifies if sufficient information has been set for authentication.
+        /// </summary>
+        /// <returns>The result of the verification.</returns>
+        public bool IsValid()
+        {
+            return
+                String.IsNullOrEmpty(this.Handle) == false &&
+                String.IsNullOrEmpty(this.Password) == false;
         }
     }
 }
