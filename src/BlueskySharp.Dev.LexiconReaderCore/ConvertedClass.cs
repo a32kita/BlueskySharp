@@ -34,7 +34,7 @@ namespace BlueskySharp.Dev.LexiconReaderCore
             set;
         }
 
-        public SchemaDefinition[] Entities
+        public ConvertedEntity[] Entities
         {
             get;
             set;
@@ -53,6 +53,19 @@ namespace BlueskySharp.Dev.LexiconReaderCore
             return string.Join(".", parts);
         }
 
+        private static string s_getDotnetTypeName(PropertyDefinition propertyDefinition)
+        {
+            switch (propertyDefinition.Type)
+            {
+                case "string":
+                    return "string";
+                case "integer":
+                    return "int";
+                default:
+                    return "Object";
+            }
+        }
+
         public static ConvertedClass GenerateClass(IEnumerable<EndpointDefinition> endpoints)
         {
             var result = new ConvertedClass();
@@ -60,6 +73,8 @@ namespace BlueskySharp.Dev.LexiconReaderCore
             var firstEndpoint = endpoints.First();
             var firstEndpointIdSplitted = firstEndpoint.Id.Split('.');
             result.FullName = s_convertToPascalCase(String.Join(".", firstEndpointIdSplitted.Take(firstEndpointIdSplitted.Length - 1)));
+
+            var knownEntities = new List<ConvertedEntity>();
 
             var convertedMethods = new List<ConvertedMethod>();
             var procedureEndpoints = endpoints.Where(epd => epd.Procedure != null);
@@ -85,18 +100,20 @@ namespace BlueskySharp.Dev.LexiconReaderCore
                         inputParameter.Required = pepds.Procedure.Input.Schema.Required?.Contains(inputProperty.Name) ?? false;
                         inputParameter.Summary = inputParameter.Summary ?? String.Empty;
 
-                        switch (inputProperty.Type)
-                        {
-                            case "string":
-                                inputParameter.Type = "string";
-                                break;
-                            case "integer":
-                                inputParameter.Type = "int";
-                                break;
-                            default:
-                                inputParameter.Type = "Object";
-                                break;
-                        }
+                        //switch (inputProperty.Type)
+                        //{
+                        //    case "string":
+                        //        inputParameter.Type = "string";
+                        //        break;
+                        //    case "integer":
+                        //        inputParameter.Type = "int";
+                        //        break;
+                        //    default:
+                        //        inputParameter.Type = "Object";
+                        //        break;
+                        //}
+
+                        inputParameter.Type = s_getDotnetTypeName(inputProperty);
 
                         inputParameters.Add(inputParameter);
                     }
@@ -113,7 +130,35 @@ namespace BlueskySharp.Dev.LexiconReaderCore
                     else
                     {
                         returnValue.TypeName = methodName + "Result";
+
+                        var returnValueProperties = new List<ConvertedProperty>();
+                        foreach (var outputProperty in procedureOutputSchema.Properties)
+                        {
+                            var rvProperty = new ConvertedProperty();
+                            rvProperty.Name = s_convertToPascalCase(outputProperty.Name);
+                            rvProperty.Required = procedureOutputSchema.Required?.Contains(outputProperty.Name) ?? false;
+                            rvProperty.Type = s_getDotnetTypeName(outputProperty);
+
+                            //switch (outputProperty.Type)
+                            //{
+                            //    case "string":
+                            //        rvProperty.Type = "string";
+                            //        break;
+                            //    case "integer":
+                            //        rvProperty.Type = "int";
+                            //        break;
+                            //    default:
+                            //        rvProperty.Type = "Object";
+                            //        break;
+                            //}
+
+                            returnValueProperties.Add(rvProperty);
+                        }
+
+                        returnValue.Properties = returnValueProperties.ToArray();
                     }
+
+                    knownEntities.Add(returnValue);
                 }
 
                 convertedMethods.Add(new ConvertedMethod()
@@ -126,7 +171,39 @@ namespace BlueskySharp.Dev.LexiconReaderCore
                 });
             }
 
+            var objectEndpoints = endpoints.Where(edps => edps.Objects != null && edps.Objects.Count > 0);
+            foreach (var oedp in objectEndpoints)
+            {
+                foreach (var objDefKvp in oedp.Objects)
+                {
+                    // 先にコレクションに追加しておくか、既存のものを取得
+                    var convEntity = new ConvertedEntity();
+                    var convEntityAddeds = knownEntities.Where(item => item.TypeName == s_convertToPascalCase(objDefKvp.Key));
+                    if (convEntityAddeds.Count() > 0)
+                        convEntity = convEntityAddeds.Single();
+                    else
+                    {
+                        convEntity.TypeName = s_convertToPascalCase(objDefKvp.Key);
+                        knownEntities.Add(convEntity);
+                    }
+
+                    var convertedProperties = new List<ConvertedProperty>();
+                    foreach (var propDef in objDefKvp.Value.Properties)
+                    {
+                        var cvProperty = new ConvertedProperty();
+                        cvProperty.Name = s_convertToPascalCase(propDef.Name);
+                        cvProperty.Required = objDefKvp.Value.Required?.Contains(propDef.Name) ?? false;
+                        cvProperty.Type = s_getDotnetTypeName(propDef);
+
+                        convertedProperties.Add(cvProperty);
+                    }
+
+                    convEntity.Properties = convertedProperties.ToArray();
+                }
+            }
+
             result.Methods = convertedMethods.ToArray();
+            result.Entities = knownEntities.ToArray();
 
             return result;
         }
@@ -159,6 +236,38 @@ namespace BlueskySharp.Dev.LexiconReaderCore
                 textWriter.WriteLine();
                 textWriter.WriteLine("        {");
 
+
+                textWriter.WriteLine("        }");
+                textWriter.WriteLine();
+            }
+
+            foreach (var entity in this.Entities)
+            {
+                textWriter.WriteLine("        /// <summary>");
+                textWriter.WriteLine("        /// Entity");
+                textWriter.WriteLine("        /// </summary>");
+
+                textWriter.WriteLine("        public class {0}", entity.TypeName);
+                textWriter.WriteLine("        {");
+
+                if (entity.Properties != null)
+                {
+                    foreach (var property in entity.Properties)
+                    {
+                        textWriter.WriteLine("            /// <summary>");
+                        textWriter.WriteLine("            /// {0}", property.Summary);
+                        textWriter.WriteLine("            /// </summary>");
+                        textWriter.WriteLine("            public {0} {1}", property.Type, property.Name);
+                        textWriter.WriteLine("            {");
+                        textWriter.WriteLine("                get; set;");
+                        textWriter.WriteLine("            }");
+                    }
+                }
+                else
+                {
+                    // ERROR
+                    textWriter.WriteLine("            // ERROR: No member definition detected.");
+                }
 
                 textWriter.WriteLine("        }");
                 textWriter.WriteLine();
