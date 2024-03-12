@@ -67,6 +67,32 @@ namespace BlueskySharp.Dev.LexiconReaderCore
             ioDefinition.Encoding = ioDefValue.GetProperty("encoding").GetString();
 
             var schemaDefValue = ioDefValue.GetProperty("schema");
+            var schemaDefinition = s_loadSchemaDefinition(schemaDefValue);
+
+            //var schemaDefinition = new SchemaDefinition();
+            //schemaDefinition.Type = schemaDefValue.GetProperty("type").GetString();
+            //schemaDefinition.Required = schemaDefValue.GetProperty("required").EnumerateArray().Select(e => e.GetString()).ToArray();
+
+            //var schemaPropertiesDefValue = schemaDefValue.GetProperty("properties");
+            //var schemaPropertiesDefinition = new List<PropertyDefinition>();
+            //foreach (var pdef in schemaPropertiesDefValue.EnumerateObject())
+            //{
+            //    schemaPropertiesDefinition.Add(new PropertyDefinition()
+            //    {
+            //        Name = pdef.Name,
+            //        Type = pdef.Value.GetProperty("type").GetString(),
+            //        Description = pdef.Value.GetPropertyStringOrDefault("description"),
+            //    });
+            //}
+
+            //schemaDefinition.Properties = schemaPropertiesDefinition.ToArray();
+
+            ioDefinition.Schema = schemaDefinition;
+            return ioDefinition;
+        }
+
+        private static SchemaDefinition s_loadSchemaDefinition(JsonElement schemaDefValue)
+        {
             var schemaDefinition = new SchemaDefinition();
             schemaDefinition.Type = schemaDefValue.GetProperty("type").GetString();
             schemaDefinition.Required = schemaDefValue.GetProperty("required").EnumerateArray().Select(e => e.GetString()).ToArray();
@@ -85,8 +111,7 @@ namespace BlueskySharp.Dev.LexiconReaderCore
 
             schemaDefinition.Properties = schemaPropertiesDefinition.ToArray();
 
-            ioDefinition.Schema = schemaDefinition;
-            return ioDefinition;
+            return schemaDefinition;
         }
     }
 }

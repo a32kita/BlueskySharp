@@ -12,24 +12,6 @@ namespace BlueskySharp.Dev.LexiconReaderCore
             set;
         }
 
-        //public string Type
-        //{
-        //    get;
-        //    set;
-        //}
-
-        //public string[] Required
-        //{
-        //    get;
-        //    set;
-        //}
-
-        //public PropertyDefinition[] Properties
-        //{
-        //    get;
-        //    set;
-        //}
-
         public SchemaDefinition Schema
         {
             get;
