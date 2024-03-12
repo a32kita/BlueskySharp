@@ -32,10 +32,10 @@ namespace BlueskySharp.Dev.LexiconReaderCore
                     procedureDefinition.Type = defValue.GetProperty("type").GetString();
 
                     // Input Schema
-                    procedureDefinition.InputSchema = s_loadSchemaDefition(defValue.GetProperty("input"));
+                    procedureDefinition.Input = s_loadIODefition(defValue.GetProperty("input"));
 
                     // Output Schema
-                    procedureDefinition.OutputSchema = s_loadSchemaDefition(defValue.GetProperty("output"));
+                    procedureDefinition.Output = s_loadIODefition(defValue.GetProperty("output"));
 
                     // Errors
                     var errorsDefValue = defValue.GetProperty("errors");
@@ -52,21 +52,26 @@ namespace BlueskySharp.Dev.LexiconReaderCore
 
                     endpointDefinition.Procedure = procedureDefinition;
                 }
+                else if (defValue.GetProperty("type").GetString() == "object")
+                {
+
+                }
             }
 
             return endpointDefinition;
         }
 
-        private static SchemaDefinition s_loadSchemaDefition(JsonElement schemaDefValue)
+        private static ProcedureIODefinition s_loadIODefition(JsonElement ioDefValue)
         {
+            var ioDefinition = new ProcedureIODefinition();
+            ioDefinition.Encoding = ioDefValue.GetProperty("encoding").GetString();
+
+            var schemaDefValue = ioDefValue.GetProperty("schema");
             var schemaDefinition = new SchemaDefinition();
-            schemaDefinition.Encoding = schemaDefValue.GetProperty("encoding").GetString();
+            schemaDefinition.Type = schemaDefValue.GetProperty("type").GetString();
+            schemaDefinition.Required = schemaDefValue.GetProperty("required").EnumerateArray().Select(e => e.GetString()).ToArray();
 
-            var schemaSchemaDefValue = schemaDefValue.GetProperty("schema");
-            schemaDefinition.Type = schemaSchemaDefValue.GetProperty("type").GetString();
-            schemaDefinition.Required = schemaSchemaDefValue.GetProperty("required").EnumerateArray().Select(e => e.GetString()).ToArray();
-
-            var schemaPropertiesDefValue = schemaSchemaDefValue.GetProperty("properties");
+            var schemaPropertiesDefValue = schemaDefValue.GetProperty("properties");
             var schemaPropertiesDefinition = new List<PropertyDefinition>();
             foreach (var pdef in schemaPropertiesDefValue.EnumerateObject())
             {
@@ -79,7 +84,9 @@ namespace BlueskySharp.Dev.LexiconReaderCore
             }
 
             schemaDefinition.Properties = schemaPropertiesDefinition.ToArray();
-            return schemaDefinition;
+
+            ioDefinition.Schema = schemaDefinition;
+            return ioDefinition;
         }
     }
 }

@@ -18,13 +18,13 @@ namespace BlueskySharp.Dev.LexiconReaderCore
             set;
         }
 
-        public SchemaDefinition InputSchema
+        public ProcedureIODefinition Input
         {
             get;
             set;
         }
 
-        public SchemaDefinition OutputSchema
+        public ProcedureIODefinition Output
         {
             get;
             set;

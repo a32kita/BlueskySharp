@@ -6,12 +6,6 @@ namespace BlueskySharp.Dev.LexiconReaderCore
 {
     public class SchemaDefinition
     {
-        public string Encoding
-        {
-            get;
-            set;
-        }
-
         public string Type
         {
             get;
