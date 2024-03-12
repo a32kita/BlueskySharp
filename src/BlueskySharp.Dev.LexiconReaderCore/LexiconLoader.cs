@@ -31,49 +31,13 @@ namespace BlueskySharp.Dev.LexiconReaderCore
                     procedureDefinition.Description = defValue.GetProperty("description").GetString();
                     procedureDefinition.Type = defValue.GetProperty("type").GetString();
 
-
                     // Input Schema
-
-                    var inputDefValue = defValue.GetProperty("input");
-                    //var inputDefinition = new SchemaDefinition();
-                    //inputDefinition.Encoding = inputDefValue.GetProperty("encoding").GetString();
-
-                    //var inputSchemaDefValue = inputDefValue.GetProperty("schema");
-                    //inputDefinition.Type = inputSchemaDefValue.GetProperty("type").GetString();
-                    //inputDefinition.Required = inputSchemaDefValue.GetProperty("required").EnumerateArray().Select(e => e.GetString()).ToArray();
-
-                    //var inputPropertiesDefValue = inputSchemaDefValue.GetProperty("properties");
-                    //var inputPropertiesDefinition = new List<PropertyDefinition>();
-                    //foreach (var pdef in inputPropertiesDefValue.EnumerateObject())
-                    //{
-                    //    inputPropertiesDefinition.Add(new PropertyDefinition()
-                    //    {
-                    //        Name = pdef.Name,
-                    //        Type = pdef.Value.GetProperty("type").GetString(),
-                    //        Description = pdef.Value.GetPropertyStringOrDefault("description"),
-                    //    });
-                    //}
-
-                    //inputDefinition.Properties = inputPropertiesDefinition.ToArray();
-                    //procedureDefinition.InputSchema = inputDefinition;
-
-                    procedureDefinition.InputSchema = s_loadSchemaDefition(inputDefValue);
+                    procedureDefinition.InputSchema = s_loadSchemaDefition(defValue.GetProperty("input"));
 
                     // Output Schema
-
-                    //var outputDefValue = defValue.GetProperty("output");
-                    //var outputDefinition = new SchemaDefinition();
-                    //outputDefinition.Encoding = outputDefValue.GetProperty("encoding").GetString();
-
-                    //var outputSchemaDefValue = outputDefValue.GetProperty("schema");
-                    //outputDefinition.Type = outputDefValue.GetProperty("type").GetString();
-                    //outputDefinition.Required = outputSchemaDefValue.GetProperty("required").EnumerateArray().Select(e => e.GetString()).ToArray();
-
-
-
+                    procedureDefinition.OutputSchema = s_loadSchemaDefition(defValue.GetProperty("output"));
 
                     // Errors
-
                     var errorsDefValue = defValue.GetProperty("errors");
                     var errorsDefinition = new List<ErrorDefinition>();
                     foreach (var errorDef in errorsDefValue.EnumerateArray())
