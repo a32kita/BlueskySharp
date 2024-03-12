@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34525.116
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlueskySharp", "BlueskySharp\BlueskySharp.csproj", "{D288111E-5D57-4FB3-9827-220DA70DA43E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlueskySharp", "BlueskySharp\BlueskySharp.csproj", "{D288111E-5D57-4FB3-9827-220DA70DA43E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlueskySharp.Dev.LexiconReaderCore", "BlueskySharp.Dev.LexiconReaderCore\BlueskySharp.Dev.LexiconReaderCore.csproj", "{31871CDF-5A9A-4EA4-8D40-C42A1533B134}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlueskySharp.Dev.LexiconsConverter", "BlueskySharp.Dev.LexiconsConverter\BlueskySharp.Dev.LexiconsConverter.csproj", "{F38EBA7A-0473-41C3-AAF8-73B913226E5F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{D288111E-5D57-4FB3-9827-220DA70DA43E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D288111E-5D57-4FB3-9827-220DA70DA43E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D288111E-5D57-4FB3-9827-220DA70DA43E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{31871CDF-5A9A-4EA4-8D40-C42A1533B134}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{31871CDF-5A9A-4EA4-8D40-C42A1533B134}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{31871CDF-5A9A-4EA4-8D40-C42A1533B134}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{31871CDF-5A9A-4EA4-8D40-C42A1533B134}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F38EBA7A-0473-41C3-AAF8-73B913226E5F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F38EBA7A-0473-41C3-AAF8-73B913226E5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F38EBA7A-0473-41C3-AAF8-73B913226E5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F38EBA7A-0473-41C3-AAF8-73B913226E5F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
