@@ -24,7 +24,7 @@ namespace BlueskySharp.Dev.LexiconReaderCore
             set;
         }
 
-        public SchemaDefinition[] Objects
+        public Dictionary<string, SchemaDefinition> Objects
         {
             get;
             set;

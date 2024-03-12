@@ -19,6 +19,7 @@ namespace BlueskySharp.Dev.LexiconReaderCore
 
             endpointDefinition.Lexicon = jsonRootElement.GetProperty("lexicon").GetUInt32();
             endpointDefinition.Id = jsonRootElement.GetProperty("id").GetString();
+            endpointDefinition.Objects = new Dictionary<string, SchemaDefinition>();
 
             var defs = jsonRootElement.GetProperty("defs");
             foreach (var def in defs.EnumerateObject())
@@ -32,29 +33,35 @@ namespace BlueskySharp.Dev.LexiconReaderCore
                     procedureDefinition.Type = defValue.GetProperty("type").GetString();
 
                     // Input Schema
-                    procedureDefinition.Input = s_loadIODefition(defValue.GetProperty("input"));
+                    var inputDef = defValue.GetPropertyElementOrNull("input");
+                    if (inputDef != null)
+                        procedureDefinition.Input = s_loadIODefition(inputDef.Value);
 
                     // Output Schema
-                    procedureDefinition.Output = s_loadIODefition(defValue.GetProperty("output"));
+                    var outputDef = defValue.GetPropertyElementOrNull("output");
+                    if (outputDef != null)
+                        procedureDefinition.Output = s_loadIODefition(outputDef.Value);
 
                     // Errors
-                    var errorsDefValue = defValue.GetProperty("errors");
-                    var errorsDefinition = new List<ErrorDefinition>();
-                    foreach (var errorDef in errorsDefValue.EnumerateArray())
+                    var errorsDefValue = defValue.GetPropertyElementOrNull("errors");
+                    if (errorsDefValue != null)
                     {
-                        errorsDefinition.Add(new ErrorDefinition()
+                        var errorsDefinition = new List<ErrorDefinition>();
+                        foreach (var errorDef in errorsDefValue.Value.EnumerateArray())
                         {
-                            Name = errorDef.GetProperty("name").GetString(),
-                        });
+                            errorsDefinition.Add(new ErrorDefinition()
+                            {
+                                Name = errorDef.GetProperty("name").GetString(),
+                            });
+                        }
+                        procedureDefinition.Errors = errorsDefinition.ToArray();
                     }
-
-                    procedureDefinition.Errors = errorsDefinition.ToArray();
 
                     endpointDefinition.Procedure = procedureDefinition;
                 }
                 else if (defValue.GetProperty("type").GetString() == "object")
                 {
-
+                    endpointDefinition.Objects.Add(def.Name, s_loadSchemaDefinition(def.Value));
                 }
             }
 
@@ -65,29 +72,8 @@ namespace BlueskySharp.Dev.LexiconReaderCore
         {
             var ioDefinition = new ProcedureIODefinition();
             ioDefinition.Encoding = ioDefValue.GetProperty("encoding").GetString();
+            ioDefinition.Schema = s_loadSchemaDefinition(ioDefValue.GetProperty("schema"));
 
-            var schemaDefValue = ioDefValue.GetProperty("schema");
-            var schemaDefinition = s_loadSchemaDefinition(schemaDefValue);
-
-            //var schemaDefinition = new SchemaDefinition();
-            //schemaDefinition.Type = schemaDefValue.GetProperty("type").GetString();
-            //schemaDefinition.Required = schemaDefValue.GetProperty("required").EnumerateArray().Select(e => e.GetString()).ToArray();
-
-            //var schemaPropertiesDefValue = schemaDefValue.GetProperty("properties");
-            //var schemaPropertiesDefinition = new List<PropertyDefinition>();
-            //foreach (var pdef in schemaPropertiesDefValue.EnumerateObject())
-            //{
-            //    schemaPropertiesDefinition.Add(new PropertyDefinition()
-            //    {
-            //        Name = pdef.Name,
-            //        Type = pdef.Value.GetProperty("type").GetString(),
-            //        Description = pdef.Value.GetPropertyStringOrDefault("description"),
-            //    });
-            //}
-
-            //schemaDefinition.Properties = schemaPropertiesDefinition.ToArray();
-
-            ioDefinition.Schema = schemaDefinition;
             return ioDefinition;
         }
 
@@ -95,21 +81,32 @@ namespace BlueskySharp.Dev.LexiconReaderCore
         {
             var schemaDefinition = new SchemaDefinition();
             schemaDefinition.Type = schemaDefValue.GetProperty("type").GetString();
-            schemaDefinition.Required = schemaDefValue.GetProperty("required").EnumerateArray().Select(e => e.GetString()).ToArray();
 
-            var schemaPropertiesDefValue = schemaDefValue.GetProperty("properties");
-            var schemaPropertiesDefinition = new List<PropertyDefinition>();
-            foreach (var pdef in schemaPropertiesDefValue.EnumerateObject())
+            if (schemaDefinition.Type == "ref")
             {
-                schemaPropertiesDefinition.Add(new PropertyDefinition()
-                {
-                    Name = pdef.Name,
-                    Type = pdef.Value.GetProperty("type").GetString(),
-                    Description = pdef.Value.GetPropertyStringOrDefault("description"),
-                });
+                schemaDefinition.Ref = schemaDefValue.GetProperty("ref").GetString();
             }
 
-            schemaDefinition.Properties = schemaPropertiesDefinition.ToArray();
+            var requiredDef = schemaDefValue.GetPropertyElementOrNull("required");
+            if (requiredDef != null)
+                schemaDefinition.Required = requiredDef.Value.EnumerateArray().Select(e => e.GetString()).ToArray();
+
+            var schemaPropertiesDefValue = schemaDefValue.GetPropertyElementOrNull("properties");
+            if (schemaPropertiesDefValue != null)
+            {
+                var schemaPropertiesDefinition = new List<PropertyDefinition>();
+                foreach (var pdef in schemaPropertiesDefValue.Value.EnumerateObject())
+                {
+                    schemaPropertiesDefinition.Add(new PropertyDefinition()
+                    {
+                        Name = pdef.Name,
+                        Type = pdef.Value.GetProperty("type").GetString(),
+                        Description = pdef.Value.GetPropertyStringOrDefault("description"),
+                    });
+                }
+
+                schemaDefinition.Properties = schemaPropertiesDefinition.ToArray();
+            }
 
             return schemaDefinition;
         }

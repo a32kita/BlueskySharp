@@ -1,4 +1,6 @@
 ﻿using BlueskySharp.Dev.LexiconReaderCore;
+using System.Text;
+using System.Xml.Xsl;
 
 namespace BlueskySharp.Dev.LexiconsConverter
 {
@@ -9,26 +11,73 @@ namespace BlueskySharp.Dev.LexiconsConverter
             Console.WriteLine("Lexicon JSON Conveter");
 
             fileSpc:
-            var jsonPath = String.Empty;
+            var inputPath = String.Empty;
             if (args.Length == 0 )
             {
                 Console.WriteLine("Please specify source JSON file;");
                 Console.Write("> ");
-                jsonPath = Console.ReadLine()?.Trim('"').Trim();
+                inputPath = Console.ReadLine()?.Trim('"').Trim();
             }
             else
             {
-                jsonPath = args[0];
+                inputPath = args[0];
             }
 
-            if (String.IsNullOrEmpty(jsonPath) || File.Exists(jsonPath) == false)
+            if (String.IsNullOrEmpty(inputPath) || (File.Exists(inputPath) == false && Directory.Exists(inputPath) == false))
                 goto fileSpc;
 
-            using (var fs = File.OpenRead(jsonPath))
+            var targetJsonFiles = new List<string>();
+            if (File.Exists(inputPath))
             {
-                var epDef = await LexiconLoader.LoadEndpointDefinition(fs);
-                Console.WriteLine();
+                targetJsonFiles.Add(inputPath);
             }
+            else
+            {
+                targetJsonFiles.AddRange(Directory.GetFiles(inputPath, "*.json", SearchOption.TopDirectoryOnly));
+            }
+
+            var endpointDefinitions = new List<EndpointDefinition>();
+            foreach (var jsonPath in targetJsonFiles)
+            {
+                using (var fs = File.OpenRead(jsonPath))
+                {
+                    var epDef = await LexiconLoader.LoadEndpointDefinition(fs);
+                    endpointDefinitions.Add(epDef);
+                }
+            }
+
+            Console.WriteLine();
+            var prcEpds = endpointDefinitions.Where(epd => epd.Procedure != null);
+            foreach (var epd in prcEpds)
+            {
+                Console.WriteLine("[PRC] {0} (Input={1}, Output={2})",
+                    epd.Id,
+                    epd.Procedure.Input?.Schema.Properties?.Length ?? 0,
+                    epd.Procedure.Output?.Schema.Properties?.Length ?? 0);
+            }
+
+            var objEpds = endpointDefinitions.Where(epd => epd.Objects != null && epd.Objects.Count > 0);
+            foreach (var epd in objEpds)
+            {
+                foreach (var obj in epd.Objects)
+                {
+                    Console.WriteLine("[OBJ] {0} {1} (Property={2})", epd.Id, obj.Key, obj.Value.Properties.Length);
+                }
+            }
+
+            Console.WriteLine();
+
+            var converted = ConvertedClass.GenerateClass(endpointDefinitions);
+            converted.WriteCSharpCodeTo(Console.Out);
+
+            using (var sw = new StreamWriter(File.OpenWrite(converted.FullName + ".cs"), Encoding.UTF8))
+            {
+                converted.WriteCSharpCodeTo(sw);
+            }
+
+            Console.WriteLine();
+            Console.WriteLine("Please press [Enter] key to exit ...");
+            Console.ReadLine();
         }
     }
 }

@@ -16,5 +16,14 @@ namespace BlueskySharp.Dev.LexiconReaderCore.InternalExtensions
 
             return defaultValue;
         }
+
+        public static JsonElement? GetPropertyElementOrNull(this JsonElement jsonElement, string propertyName)
+        {
+            JsonElement outputElement;
+            if (jsonElement.TryGetProperty(propertyName, out outputElement))
+                return outputElement;
+
+            return null;
+        }
     }
 }

@@ -4,27 +4,33 @@ using System.Text;
 
 namespace BlueskySharp.Dev.LexiconReaderCore
 {
-    public class SchemaDefinition
+    public class ConvertedMethod
     {
-        public string Type
+        public string Name
         {
             get;
             set;
         }
 
-        public string Ref
+        public string Summary
         {
             get;
             set;
         }
 
-        public string[] Required
+        public string EndpointName
         {
             get;
             set;
         }
 
-        public PropertyDefinition[] Properties
+        public ConvertedParameter[] Parameters
+        {
+            get;
+            set;
+        }
+
+        public ConvertedEntity ReturnValue
         {
             get;
             set;
