@@ -72,7 +72,10 @@ namespace BlueskySharp.Dev.LexiconReaderCore
         {
             var ioDefinition = new ProcedureIODefinition();
             ioDefinition.Encoding = ioDefValue.GetProperty("encoding").GetString();
-            ioDefinition.Schema = s_loadSchemaDefinition(ioDefValue.GetProperty("schema"));
+
+            var schemaDef = ioDefValue.GetPropertyElementOrNull("schema");
+            if (schemaDef != null)
+                ioDefinition.Schema = s_loadSchemaDefinition(schemaDef.Value);
 
             return ioDefinition;
         }

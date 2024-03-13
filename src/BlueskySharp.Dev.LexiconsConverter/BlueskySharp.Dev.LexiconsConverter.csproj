@@ -11,4 +11,8 @@
     <ProjectReference Include="..\BlueskySharp.Dev.LexiconReaderCore\BlueskySharp.Dev.LexiconReaderCore.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="TestOutputs\" />
+  </ItemGroup>
+
 </Project>

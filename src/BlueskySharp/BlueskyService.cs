@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
+using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 
 namespace Eobw.BlueskySharp
@@ -27,6 +28,12 @@ namespace Eobw.BlueskySharp
         private void _initializeHttpClient()
         {
             this._httpClient = new HttpClient();
+        }
+
+
+        internal JsonObject InvokeJsonRequest(string endpointName, JsonObject parameter)
+        {
+            throw new NotImplementedException();
         }
 
 

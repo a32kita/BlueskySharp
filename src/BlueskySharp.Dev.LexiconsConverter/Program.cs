@@ -52,8 +52,8 @@ namespace BlueskySharp.Dev.LexiconsConverter
             {
                 Console.WriteLine("[PRC] {0} (Input={1}, Output={2})",
                     epd.Id,
-                    epd.Procedure.Input?.Schema.Properties?.Length ?? 0,
-                    epd.Procedure.Output?.Schema.Properties?.Length ?? 0);
+                    epd.Procedure.Input?.Schema?.Properties?.Length ?? 0,
+                    epd.Procedure.Output?.Schema?.Properties?.Length ?? 0);
             }
 
             var objEpds = endpointDefinitions.Where(epd => epd.Objects != null && epd.Objects.Count > 0);

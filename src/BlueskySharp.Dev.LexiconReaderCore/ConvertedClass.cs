@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 
 namespace BlueskySharp.Dev.LexiconReaderCore
 {
@@ -53,6 +55,19 @@ namespace BlueskySharp.Dev.LexiconReaderCore
             return string.Join(".", parts);
         }
 
+        private static string s_convertToCamelCase(string input)
+        {
+            string[] parts = input.Split('.');
+            for (int i = 0; i < parts.Length; i++)
+            {
+                if (!string.IsNullOrEmpty(parts[i]))
+                {
+                    parts[i] = char.ToLower(parts[i][0]) + parts[i].Substring(1);
+                }
+            }
+            return string.Join(".", parts);
+        }
+
         private static string s_getDotnetTypeName(PropertyDefinition propertyDefinition)
         {
             switch (propertyDefinition.Type)
@@ -61,10 +76,23 @@ namespace BlueskySharp.Dev.LexiconReaderCore
                     return "string";
                 case "integer":
                     return "int";
+                case "boolean":
+                    return "bool";
+                case "array":
+                    return "Object[]";
                 default:
                     return "Object";
             }
         }
+
+        //private static string s_valueToCSharpSourceValue(ConvertedProperty property, string value)
+        //{
+        //    switch (property.Type)
+        //    {
+        //        case "string":
+        //            return "\"" + value + 
+        //    }
+        //}
 
         public static ConvertedClass GenerateClass(IEnumerable<EndpointDefinition> endpoints)
         {
@@ -72,7 +100,7 @@ namespace BlueskySharp.Dev.LexiconReaderCore
 
             var firstEndpoint = endpoints.First();
             var firstEndpointIdSplitted = firstEndpoint.Id.Split('.');
-            result.FullName = s_convertToPascalCase(String.Join(".", firstEndpointIdSplitted.Take(firstEndpointIdSplitted.Length - 1)));
+            result.FullName = "Eobw.BlueskySharp.Endpoints." + s_convertToPascalCase(String.Join(".", firstEndpointIdSplitted.Take(firstEndpointIdSplitted.Length - 1)));
 
             var knownEntities = new List<ConvertedEntity>();
 
@@ -83,7 +111,7 @@ namespace BlueskySharp.Dev.LexiconReaderCore
                 var methodName = s_convertToPascalCase(pepds.Id.Split('.').Last());
 
                 var inputParameters = new List<ConvertedParameter>();
-                if (pepds.Procedure.Input != null)
+                if (pepds.Procedure.Input?.Schema != null)
                 {
                     var schemaProperties = pepds.Procedure.Input.Schema.Properties;
                     if (pepds.Procedure.Input.Schema.Type == "ref")
@@ -99,20 +127,6 @@ namespace BlueskySharp.Dev.LexiconReaderCore
                         inputParameter.Name = s_convertToPascalCase(inputProperty.Name);
                         inputParameter.Required = pepds.Procedure.Input.Schema.Required?.Contains(inputProperty.Name) ?? false;
                         inputParameter.Summary = inputParameter.Summary ?? String.Empty;
-
-                        //switch (inputProperty.Type)
-                        //{
-                        //    case "string":
-                        //        inputParameter.Type = "string";
-                        //        break;
-                        //    case "integer":
-                        //        inputParameter.Type = "int";
-                        //        break;
-                        //    default:
-                        //        inputParameter.Type = "Object";
-                        //        break;
-                        //}
-
                         inputParameter.Type = s_getDotnetTypeName(inputProperty);
 
                         inputParameters.Add(inputParameter);
@@ -138,19 +152,6 @@ namespace BlueskySharp.Dev.LexiconReaderCore
                             rvProperty.Name = s_convertToPascalCase(outputProperty.Name);
                             rvProperty.Required = procedureOutputSchema.Required?.Contains(outputProperty.Name) ?? false;
                             rvProperty.Type = s_getDotnetTypeName(outputProperty);
-
-                            //switch (outputProperty.Type)
-                            //{
-                            //    case "string":
-                            //        rvProperty.Type = "string";
-                            //        break;
-                            //    case "integer":
-                            //        rvProperty.Type = "int";
-                            //        break;
-                            //    default:
-                            //        rvProperty.Type = "Object";
-                            //        break;
-                            //}
 
                             returnValueProperties.Add(rvProperty);
                         }
@@ -215,10 +216,34 @@ namespace BlueskySharp.Dev.LexiconReaderCore
         /// <param name="textWriter"></param>
         public void WriteCSharpCodeTo(TextWriter textWriter)
         {
+            textWriter.WriteLine("using System;");
+            textWriter.WriteLine("using System.IO;");
+            textWriter.WriteLine("using System.Net;");
+            textWriter.WriteLine("using System.Net.Http;");
+            textWriter.WriteLine("using System.Text.Json;");
+            textWriter.WriteLine("using System.Text.Json.Nodes;");
+            textWriter.WriteLine();
+            //textWriter.WriteLine("using Eobw.BlueskySharp.Endpoints;");
+            //textWriter.WriteLine("using Eobw.BlueskySharp.Endpoints;");
+            //textWriter.WriteLine();
+
             textWriter.WriteLine("namespace {0}", this.NameSpace);
             textWriter.WriteLine("{");
-            textWriter.WriteLine("    public class {0}", this.Name);
+            textWriter.WriteLine("    public class {0} : BlueskyEndpointBase", this.Name);
             textWriter.WriteLine("    {");
+            textWriter.WriteLine("        // NOTE: This source is auto-generated by Lexicon JSON Conveter beta.");
+            textWriter.WriteLine();
+
+            textWriter.WriteLine("        /// <summary>");
+            textWriter.WriteLine("        /// Initializes new instance of <see cref=\"{0}\"/> class.", this.Name);
+            textWriter.WriteLine("        /// </summary>");
+            textWriter.WriteLine("        /// <param name=\"parent\">Specify instance of <see cref=\"BlueskyService\"/>.</param>");
+            textWriter.WriteLine("        internal {0}(BlueskyService parent)", this.Name);
+            textWriter.WriteLine("            :base(parent)");
+            textWriter.WriteLine("        {");
+            textWriter.WriteLine("            // NOP");
+            textWriter.WriteLine("        }");
+            textWriter.WriteLine();
 
             foreach (var method in this.Methods)
             {
@@ -235,7 +260,25 @@ namespace BlueskySharp.Dev.LexiconReaderCore
                 textWriter.Write("({0})", String.Join(", ", method.Parameters.Select(p => p.Type + " " + p.Name + (p.Required ? "" : " = default(" + p.Type + ")"))));
                 textWriter.WriteLine();
                 textWriter.WriteLine("        {");
+                textWriter.WriteLine("            var endpointName = \"{0}\";", method.EndpointName);
+                textWriter.WriteLine("            var parameterJsonObject = new JsonObject();");
 
+                foreach (var parameter in method.Parameters)
+                {
+                    textWriter.WriteLine("            if ({0} != default({1})) parameterJsonObject[\"{2}\"] = {0};", parameter.Name, parameter.Type, s_convertToCamelCase(parameter.Name));
+                }
+
+                textWriter.WriteLine();
+
+                if (method.ReturnValue != null && method.ReturnValue.TypeName != "void")
+                {
+                    textWriter.WriteLine("            var result = this.Parent.InvokeJsonRequest(endpointName, parameterJsonObject);");
+                    textWriter.WriteLine("            return {0}.FromJsonObject(result);", method.ReturnValue.TypeName);
+                }
+                else
+                {
+                    textWriter.WriteLine("            this.Parent.InvokeJsonRequest(endpointName, parameterJsonObject);");
+                }
 
                 textWriter.WriteLine("        }");
                 textWriter.WriteLine();
@@ -261,7 +304,36 @@ namespace BlueskySharp.Dev.LexiconReaderCore
                         textWriter.WriteLine("            {");
                         textWriter.WriteLine("                get; set;");
                         textWriter.WriteLine("            }");
+                        textWriter.WriteLine();
                     }
+
+                    textWriter.WriteLine("            public JsonObject ToJsonObject()");
+                    textWriter.WriteLine("            {");
+                    textWriter.WriteLine("                var result = new JsonObject();");;
+
+                    //var a = new JsonObject();
+                    //a[""] = "";
+
+                    foreach (var property in entity.Properties)
+                    {
+                        textWriter.WriteLine("                if (this.{0} != default({1})) result[\"{2}\"] = this.{0};", property.Name, property.Type, s_convertToCamelCase(property.Name));
+                    }
+
+                    textWriter.WriteLine("                return result;");
+                    textWriter.WriteLine("            }");
+                    textWriter.WriteLine();
+
+                    textWriter.WriteLine("            public static {0} FromJsonObject(JsonObject source)", entity.TypeName);
+                    textWriter.WriteLine("            {");
+                    textWriter.WriteLine("                var result = new {0}();", entity.TypeName);
+
+                    foreach (var property in entity.Properties)
+                    {
+                        textWriter.WriteLine("                if (source.ContainsKey(\"{0}\")) result.{1} = ({2})source[\"{0}\"];", s_convertToCamelCase(property.Name), property.Name, property.Type);
+                    }
+
+                    textWriter.WriteLine("                return result;");
+                    textWriter.WriteLine("            }");
                 }
                 else
                 {
