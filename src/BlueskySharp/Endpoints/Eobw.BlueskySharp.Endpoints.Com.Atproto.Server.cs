@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Http;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using System.Text.Json.Serialization.Metadata;
 
 namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
 {
@@ -50,7 +51,7 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
         /// <param name="Password"></param>
         /// <param name="RecoveryKey"></param>
         /// <param name="PlcOp"></param>
-        public CreateAccountResult CreateAccount(string Email = default(string), string Handle, string Did = default(string), string InviteCode = default(string), string VerificationCode = default(string), string VerificationPhone = default(string), string Password = default(string), string RecoveryKey = default(string), Object PlcOp = default(Object))
+        public CreateAccountResult CreateAccount(string Email = default(string), string Handle = default, string Did = default(string), string InviteCode = default(string), string VerificationCode = default(string), string VerificationPhone = default(string), string Password = default(string), string RecoveryKey = default(string), Object PlcOp = default(Object))
         {
             var endpointName = "com.atproto.server.createAccount";
             var parameterJsonObject = new JsonObject();
@@ -62,7 +63,7 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
             if (VerificationPhone != default(string)) parameterJsonObject["verificationPhone"] = VerificationPhone;
             if (Password != default(string)) parameterJsonObject["password"] = Password;
             if (RecoveryKey != default(string)) parameterJsonObject["recoveryKey"] = RecoveryKey;
-            if (PlcOp != default(Object)) parameterJsonObject["plcOp"] = PlcOp;
+            //if (PlcOp != default(Object)) parameterJsonObject["plcOp"] = PlcOp;
 
             var result = this.Parent.InvokeJsonRequest(endpointName, parameterJsonObject);
             return CreateAccountResult.FromJsonObject(result);
@@ -113,7 +114,7 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
             var parameterJsonObject = new JsonObject();
             if (CodeCount != default(int)) parameterJsonObject["codeCount"] = CodeCount;
             if (UseCount != default(int)) parameterJsonObject["useCount"] = UseCount;
-            if (ForAccounts != default(Object[])) parameterJsonObject["forAccounts"] = ForAccounts;
+            //if (ForAccounts != default(Object[])) parameterJsonObject["forAccounts"] = ForAccounts;
 
             var result = this.Parent.InvokeJsonRequest(endpointName, parameterJsonObject);
             return CreateInviteCodesResult.FromJsonObject(result);
@@ -343,7 +344,7 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
                 if (this.RefreshJwt != default(string)) result["refreshJwt"] = this.RefreshJwt;
                 if (this.Handle != default(string)) result["handle"] = this.Handle;
                 if (this.Did != default(string)) result["did"] = this.Did;
-                if (this.DidDoc != default(Object)) result["didDoc"] = this.DidDoc;
+                //if (this.DidDoc != default(Object)) result["didDoc"] = this.DidDoc;
                 return result;
             }
 
@@ -441,14 +442,14 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
             public JsonObject ToJsonObject()
             {
                 var result = new JsonObject();
-                if (this.Codes != default(Object[])) result["codes"] = this.Codes;
+                //if (this.Codes != default(Object[])) result["codes"] = this.Codes;
                 return result;
             }
 
             public static CreateInviteCodesResult FromJsonObject(JsonObject source)
             {
                 var result = new CreateInviteCodesResult();
-                if (source.ContainsKey("codes")) result.Codes = (Object[])source["codes"];
+                //if (source.ContainsKey("codes")) result.Codes = (Object[])source["codes"];
                 return result;
             }
         }
@@ -521,7 +522,7 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
                 if (this.RefreshJwt != default(string)) result["refreshJwt"] = this.RefreshJwt;
                 if (this.Handle != default(string)) result["handle"] = this.Handle;
                 if (this.Did != default(string)) result["did"] = this.Did;
-                if (this.DidDoc != default(Object)) result["didDoc"] = this.DidDoc;
+                //if (this.DidDoc != default(Object)) result["didDoc"] = this.DidDoc;
                 if (this.Email != default(string)) result["email"] = this.Email;
                 if (this.EmailConfirmed != default(bool)) result["emailConfirmed"] = this.EmailConfirmed;
                 return result;
@@ -593,7 +594,7 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
                 if (this.RefreshJwt != default(string)) result["refreshJwt"] = this.RefreshJwt;
                 if (this.Handle != default(string)) result["handle"] = this.Handle;
                 if (this.Did != default(string)) result["did"] = this.Did;
-                if (this.DidDoc != default(Object)) result["didDoc"] = this.DidDoc;
+                //if (this.DidDoc != default(Object)) result["didDoc"] = this.DidDoc;
                 return result;
             }
 
@@ -690,7 +691,7 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
             {
                 var result = new JsonObject();
                 if (this.Account != default(string)) result["account"] = this.Account;
-                if (this.Codes != default(Object[])) result["codes"] = this.Codes;
+                //if (this.Codes != default(Object[])) result["codes"] = this.Codes;
                 return result;
             }
 
@@ -698,7 +699,7 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
             {
                 var result = new AccountCodes();
                 if (source.ContainsKey("account")) result.Account = (string)source["account"];
-                if (source.ContainsKey("codes")) result.Codes = (Object[])source["codes"];
+                //if (source.ContainsKey("codes")) result.Codes = (Object[])source["codes"];
                 return result;
             }
         }
@@ -773,7 +774,7 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
                 if (this.ForAccount != default(string)) result["forAccount"] = this.ForAccount;
                 if (this.CreatedBy != default(string)) result["createdBy"] = this.CreatedBy;
                 if (this.CreatedAt != default(string)) result["createdAt"] = this.CreatedAt;
-                if (this.Uses != default(Object[])) result["uses"] = this.Uses;
+                //if (this.Uses != default(Object[])) result["uses"] = this.Uses;
                 return result;
             }
 
@@ -786,7 +787,7 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
                 if (source.ContainsKey("forAccount")) result.ForAccount = (string)source["forAccount"];
                 if (source.ContainsKey("createdBy")) result.CreatedBy = (string)source["createdBy"];
                 if (source.ContainsKey("createdAt")) result.CreatedAt = (string)source["createdAt"];
-                if (source.ContainsKey("uses")) result.Uses = (Object[])source["uses"];
+                //if (source.ContainsKey("uses")) result.Uses = (Object[])source["uses"];
                 return result;
             }
         }
