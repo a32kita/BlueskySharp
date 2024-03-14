@@ -31,7 +31,7 @@ namespace Eobw.BlueskySharp
         }
 
 
-        internal JsonObject InvokeJsonRequest(string endpointName, JsonObject parameter)
+        internal async Task<JsonObject> InvokeJsonRequestAsync(string endpointName, JsonObject parameter)
         {
             throw new NotImplementedException();
         }

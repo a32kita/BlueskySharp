@@ -1,6 +1,5 @@
 ﻿using BlueskySharp.Dev.LexiconReaderCore;
 using System.Text;
-using System.Xml.Xsl;
 
 namespace BlueskySharp.Dev.LexiconsConverter
 {

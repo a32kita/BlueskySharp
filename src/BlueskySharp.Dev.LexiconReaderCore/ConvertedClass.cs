@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -162,12 +163,16 @@ namespace BlueskySharp.Dev.LexiconReaderCore
                     knownEntities.Add(returnValue);
                 }
 
+                var requiredParams = inputParameters.Where(p => p.Required);
+                var optionalParams = inputParameters.Where(p => !p.Required);
+                var sortedParams = requiredParams.Concat(optionalParams);
+
                 convertedMethods.Add(new ConvertedMethod()
                 {
                     Name = methodName,
                     Summary = pepds.Procedure.Description ?? String.Empty,
                     EndpointName = pepds.Id,
-                    Parameters = inputParameters.ToArray(),
+                    Parameters = sortedParams.ToArray(),
                     ReturnValue = returnValue,
                 });
             }
@@ -222,6 +227,7 @@ namespace BlueskySharp.Dev.LexiconReaderCore
             textWriter.WriteLine("using System.Net.Http;");
             textWriter.WriteLine("using System.Text.Json;");
             textWriter.WriteLine("using System.Text.Json.Nodes;");
+            textWriter.WriteLine("using System.Threading.Tasks;");
             textWriter.WriteLine();
             //textWriter.WriteLine("using Eobw.BlueskySharp.Endpoints;");
             //textWriter.WriteLine("using Eobw.BlueskySharp.Endpoints;");
@@ -247,6 +253,8 @@ namespace BlueskySharp.Dev.LexiconReaderCore
 
             foreach (var method in this.Methods)
             {
+                var returnValueIsVoid = String.IsNullOrEmpty(method.ReturnValue.TypeName) || method.ReturnValue.TypeName == "void";
+
                 textWriter.WriteLine("        /// <summary>");
                 textWriter.WriteLine("        /// {0}", method.Summary);
                 textWriter.WriteLine("        /// ({0})", method.EndpointName);
@@ -255,8 +263,41 @@ namespace BlueskySharp.Dev.LexiconReaderCore
                 {
                     textWriter.WriteLine("        /// <param name=\"{0}\">{1}</param>", parameter.Name, parameter.Summary);
                 }
-
                 textWriter.Write("        public {0} {1}", method.ReturnValue.TypeName, method.Name);
+                textWriter.Write("({0})", String.Join(", ", method.Parameters.Select(p => p.Type + " " + p.Name + (p.Required ? "" : " = default(" + p.Type + ")"))));
+                textWriter.WriteLine();
+                textWriter.WriteLine("        {");
+
+                textWriter.Write("            ");
+                if (!returnValueIsVoid)
+                {
+                    textWriter.Write("return ");
+                }
+                textWriter.Write("Task.Run(async () => await {0}Async(", method.Name);
+                textWriter.Write(String.Join(", ", method.Parameters.Select(p => p.Name)));
+                if (returnValueIsVoid)
+                {
+                    textWriter.WriteLine(")).Wait();");
+                }
+                else
+                {
+                    textWriter.WriteLine(")).Result;");
+                }
+
+                textWriter.WriteLine("        }");
+
+                textWriter.WriteLine();
+
+                textWriter.WriteLine("        /// <summary>");
+                textWriter.WriteLine("        /// {0} (Async)", method.Summary);
+                textWriter.WriteLine("        /// ({0})", method.EndpointName);
+                textWriter.WriteLine("        /// </summary>");
+                foreach (var parameter in method.Parameters)
+                {
+                    textWriter.WriteLine("        /// <param name=\"{0}\">{1}</param>", parameter.Name, parameter.Summary);
+                }
+
+                textWriter.Write("        public async Task{0} {1}Async", returnValueIsVoid ? "" : "<" + method.ReturnValue.TypeName + ">", method.Name);
                 textWriter.Write("({0})", String.Join(", ", method.Parameters.Select(p => p.Type + " " + p.Name + (p.Required ? "" : " = default(" + p.Type + ")"))));
                 textWriter.WriteLine();
                 textWriter.WriteLine("        {");
@@ -272,12 +313,12 @@ namespace BlueskySharp.Dev.LexiconReaderCore
 
                 if (method.ReturnValue != null && method.ReturnValue.TypeName != "void")
                 {
-                    textWriter.WriteLine("            var result = this.Parent.InvokeJsonRequest(endpointName, parameterJsonObject);");
+                    textWriter.WriteLine("            var result = await this.Parent.InvokeJsonRequestAsync(endpointName, parameterJsonObject);");
                     textWriter.WriteLine("            return {0}.FromJsonObject(result);", method.ReturnValue.TypeName);
                 }
                 else
                 {
-                    textWriter.WriteLine("            this.Parent.InvokeJsonRequest(endpointName, parameterJsonObject);");
+                    textWriter.WriteLine("            await this.Parent.InvokeJsonRequestAsync(endpointName, parameterJsonObject);");
                 }
 
                 textWriter.WriteLine("        }");

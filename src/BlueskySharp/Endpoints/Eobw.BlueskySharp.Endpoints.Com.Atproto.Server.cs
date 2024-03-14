@@ -4,7 +4,7 @@ using System.Net;
 using System.Net.Http;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using System.Text.Json.Serialization.Metadata;
+using System.Threading.Tasks;
 
 namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
 {
@@ -30,20 +30,31 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
         /// <param name="Token"></param>
         public void ConfirmEmail(string Email, string Token)
         {
+            Task.Run(async () => await ConfirmEmailAsync(Email, Token)).Wait();
+        }
+
+        /// <summary>
+        /// Confirm an email using a token from com.atproto.server.requestEmailConfirmation. (Async)
+        /// (com.atproto.server.confirmEmail)
+        /// </summary>
+        /// <param name="Email"></param>
+        /// <param name="Token"></param>
+        public async Task ConfirmEmailAsync(string Email, string Token)
+        {
             var endpointName = "com.atproto.server.confirmEmail";
             var parameterJsonObject = new JsonObject();
             if (Email != default(string)) parameterJsonObject["email"] = Email;
             if (Token != default(string)) parameterJsonObject["token"] = Token;
 
-            this.Parent.InvokeJsonRequest(endpointName, parameterJsonObject);
+            await this.Parent.InvokeJsonRequestAsync(endpointName, parameterJsonObject);
         }
 
         /// <summary>
         /// Create an account.
         /// (com.atproto.server.createAccount)
         /// </summary>
-        /// <param name="Email"></param>
         /// <param name="Handle"></param>
+        /// <param name="Email"></param>
         /// <param name="Did"></param>
         /// <param name="InviteCode"></param>
         /// <param name="VerificationCode"></param>
@@ -51,21 +62,39 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
         /// <param name="Password"></param>
         /// <param name="RecoveryKey"></param>
         /// <param name="PlcOp"></param>
-        public CreateAccountResult CreateAccount(string Email = default(string), string Handle = default, string Did = default(string), string InviteCode = default(string), string VerificationCode = default(string), string VerificationPhone = default(string), string Password = default(string), string RecoveryKey = default(string), Object PlcOp = default(Object))
+        public CreateAccountResult CreateAccount(string Handle, string Email = default(string), string Did = default(string), string InviteCode = default(string), string VerificationCode = default(string), string VerificationPhone = default(string), string Password = default(string), string RecoveryKey = default(string), Object PlcOp = default(Object))
+        {
+            return Task.Run(async () => await CreateAccountAsync(Handle, Email, Did, InviteCode, VerificationCode, VerificationPhone, Password, RecoveryKey, PlcOp)).Result;
+        }
+
+        /// <summary>
+        /// Create an account. (Async)
+        /// (com.atproto.server.createAccount)
+        /// </summary>
+        /// <param name="Handle"></param>
+        /// <param name="Email"></param>
+        /// <param name="Did"></param>
+        /// <param name="InviteCode"></param>
+        /// <param name="VerificationCode"></param>
+        /// <param name="VerificationPhone"></param>
+        /// <param name="Password"></param>
+        /// <param name="RecoveryKey"></param>
+        /// <param name="PlcOp"></param>
+        public async Task<CreateAccountResult> CreateAccountAsync(string Handle, string Email = default(string), string Did = default(string), string InviteCode = default(string), string VerificationCode = default(string), string VerificationPhone = default(string), string Password = default(string), string RecoveryKey = default(string), Object PlcOp = default(Object))
         {
             var endpointName = "com.atproto.server.createAccount";
             var parameterJsonObject = new JsonObject();
-            if (Email != default(string)) parameterJsonObject["email"] = Email;
             if (Handle != default(string)) parameterJsonObject["handle"] = Handle;
+            if (Email != default(string)) parameterJsonObject["email"] = Email;
             if (Did != default(string)) parameterJsonObject["did"] = Did;
             if (InviteCode != default(string)) parameterJsonObject["inviteCode"] = InviteCode;
             if (VerificationCode != default(string)) parameterJsonObject["verificationCode"] = VerificationCode;
             if (VerificationPhone != default(string)) parameterJsonObject["verificationPhone"] = VerificationPhone;
             if (Password != default(string)) parameterJsonObject["password"] = Password;
             if (RecoveryKey != default(string)) parameterJsonObject["recoveryKey"] = RecoveryKey;
-            //if (PlcOp != default(Object)) parameterJsonObject["plcOp"] = PlcOp;
+            if (PlcOp != default(Object)) parameterJsonObject["plcOp"] = PlcOp;
 
-            var result = this.Parent.InvokeJsonRequest(endpointName, parameterJsonObject);
+            var result = await this.Parent.InvokeJsonRequestAsync(endpointName, parameterJsonObject);
             return CreateAccountResult.FromJsonObject(result);
         }
 
@@ -76,11 +105,21 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
         /// <param name="Name"></param>
         public AppPassword CreateAppPassword(string Name)
         {
+            return Task.Run(async () => await CreateAppPasswordAsync(Name)).Result;
+        }
+
+        /// <summary>
+        /// Create an App Password. (Async)
+        /// (com.atproto.server.createAppPassword)
+        /// </summary>
+        /// <param name="Name"></param>
+        public async Task<AppPassword> CreateAppPasswordAsync(string Name)
+        {
             var endpointName = "com.atproto.server.createAppPassword";
             var parameterJsonObject = new JsonObject();
             if (Name != default(string)) parameterJsonObject["name"] = Name;
 
-            var result = this.Parent.InvokeJsonRequest(endpointName, parameterJsonObject);
+            var result = await this.Parent.InvokeJsonRequestAsync(endpointName, parameterJsonObject);
             return AppPassword.FromJsonObject(result);
         }
 
@@ -92,12 +131,23 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
         /// <param name="ForAccount"></param>
         public CreateInviteCodeResult CreateInviteCode(int UseCount, string ForAccount = default(string))
         {
+            return Task.Run(async () => await CreateInviteCodeAsync(UseCount, ForAccount)).Result;
+        }
+
+        /// <summary>
+        /// Create an invite code. (Async)
+        /// (com.atproto.server.createInviteCode)
+        /// </summary>
+        /// <param name="UseCount"></param>
+        /// <param name="ForAccount"></param>
+        public async Task<CreateInviteCodeResult> CreateInviteCodeAsync(int UseCount, string ForAccount = default(string))
+        {
             var endpointName = "com.atproto.server.createInviteCode";
             var parameterJsonObject = new JsonObject();
             if (UseCount != default(int)) parameterJsonObject["useCount"] = UseCount;
             if (ForAccount != default(string)) parameterJsonObject["forAccount"] = ForAccount;
 
-            var result = this.Parent.InvokeJsonRequest(endpointName, parameterJsonObject);
+            var result = await this.Parent.InvokeJsonRequestAsync(endpointName, parameterJsonObject);
             return CreateInviteCodeResult.FromJsonObject(result);
         }
 
@@ -110,13 +160,25 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
         /// <param name="ForAccounts"></param>
         public CreateInviteCodesResult CreateInviteCodes(int CodeCount, int UseCount, Object[] ForAccounts = default(Object[]))
         {
+            return Task.Run(async () => await CreateInviteCodesAsync(CodeCount, UseCount, ForAccounts)).Result;
+        }
+
+        /// <summary>
+        /// Create invite codes. (Async)
+        /// (com.atproto.server.createInviteCodes)
+        /// </summary>
+        /// <param name="CodeCount"></param>
+        /// <param name="UseCount"></param>
+        /// <param name="ForAccounts"></param>
+        public async Task<CreateInviteCodesResult> CreateInviteCodesAsync(int CodeCount, int UseCount, Object[] ForAccounts = default(Object[]))
+        {
             var endpointName = "com.atproto.server.createInviteCodes";
             var parameterJsonObject = new JsonObject();
             if (CodeCount != default(int)) parameterJsonObject["codeCount"] = CodeCount;
             if (UseCount != default(int)) parameterJsonObject["useCount"] = UseCount;
-            //if (ForAccounts != default(Object[])) parameterJsonObject["forAccounts"] = ForAccounts;
+            if (ForAccounts != default(Object[])) parameterJsonObject["forAccounts"] = ForAccounts;
 
-            var result = this.Parent.InvokeJsonRequest(endpointName, parameterJsonObject);
+            var result = await this.Parent.InvokeJsonRequestAsync(endpointName, parameterJsonObject);
             return CreateInviteCodesResult.FromJsonObject(result);
         }
 
@@ -128,12 +190,23 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
         /// <param name="Password"></param>
         public CreateSessionResult CreateSession(string Identifier, string Password)
         {
+            return Task.Run(async () => await CreateSessionAsync(Identifier, Password)).Result;
+        }
+
+        /// <summary>
+        /// Create an authentication session. (Async)
+        /// (com.atproto.server.createSession)
+        /// </summary>
+        /// <param name="Identifier"></param>
+        /// <param name="Password"></param>
+        public async Task<CreateSessionResult> CreateSessionAsync(string Identifier, string Password)
+        {
             var endpointName = "com.atproto.server.createSession";
             var parameterJsonObject = new JsonObject();
             if (Identifier != default(string)) parameterJsonObject["identifier"] = Identifier;
             if (Password != default(string)) parameterJsonObject["password"] = Password;
 
-            var result = this.Parent.InvokeJsonRequest(endpointName, parameterJsonObject);
+            var result = await this.Parent.InvokeJsonRequestAsync(endpointName, parameterJsonObject);
             return CreateSessionResult.FromJsonObject(result);
         }
 
@@ -146,13 +219,25 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
         /// <param name="Token"></param>
         public void DeleteAccount(string Did, string Password, string Token)
         {
+            Task.Run(async () => await DeleteAccountAsync(Did, Password, Token)).Wait();
+        }
+
+        /// <summary>
+        /// Delete an actor's account with a token and password. (Async)
+        /// (com.atproto.server.deleteAccount)
+        /// </summary>
+        /// <param name="Did"></param>
+        /// <param name="Password"></param>
+        /// <param name="Token"></param>
+        public async Task DeleteAccountAsync(string Did, string Password, string Token)
+        {
             var endpointName = "com.atproto.server.deleteAccount";
             var parameterJsonObject = new JsonObject();
             if (Did != default(string)) parameterJsonObject["did"] = Did;
             if (Password != default(string)) parameterJsonObject["password"] = Password;
             if (Token != default(string)) parameterJsonObject["token"] = Token;
 
-            this.Parent.InvokeJsonRequest(endpointName, parameterJsonObject);
+            await this.Parent.InvokeJsonRequestAsync(endpointName, parameterJsonObject);
         }
 
         /// <summary>
@@ -161,10 +246,19 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
         /// </summary>
         public void DeleteSession()
         {
+            Task.Run(async () => await DeleteSessionAsync()).Wait();
+        }
+
+        /// <summary>
+        /// Delete the current session. (Async)
+        /// (com.atproto.server.deleteSession)
+        /// </summary>
+        public async Task DeleteSessionAsync()
+        {
             var endpointName = "com.atproto.server.deleteSession";
             var parameterJsonObject = new JsonObject();
 
-            this.Parent.InvokeJsonRequest(endpointName, parameterJsonObject);
+            await this.Parent.InvokeJsonRequestAsync(endpointName, parameterJsonObject);
         }
 
         /// <summary>
@@ -173,10 +267,19 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
         /// </summary>
         public RefreshSessionResult RefreshSession()
         {
+            return Task.Run(async () => await RefreshSessionAsync()).Result;
+        }
+
+        /// <summary>
+        /// Refresh an authentication session. (Async)
+        /// (com.atproto.server.refreshSession)
+        /// </summary>
+        public async Task<RefreshSessionResult> RefreshSessionAsync()
+        {
             var endpointName = "com.atproto.server.refreshSession";
             var parameterJsonObject = new JsonObject();
 
-            var result = this.Parent.InvokeJsonRequest(endpointName, parameterJsonObject);
+            var result = await this.Parent.InvokeJsonRequestAsync(endpointName, parameterJsonObject);
             return RefreshSessionResult.FromJsonObject(result);
         }
 
@@ -186,10 +289,19 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
         /// </summary>
         public void RequestAccountDelete()
         {
+            Task.Run(async () => await RequestAccountDeleteAsync()).Wait();
+        }
+
+        /// <summary>
+        /// Initiate a user account deletion via email. (Async)
+        /// (com.atproto.server.requestAccountDelete)
+        /// </summary>
+        public async Task RequestAccountDeleteAsync()
+        {
             var endpointName = "com.atproto.server.requestAccountDelete";
             var parameterJsonObject = new JsonObject();
 
-            this.Parent.InvokeJsonRequest(endpointName, parameterJsonObject);
+            await this.Parent.InvokeJsonRequestAsync(endpointName, parameterJsonObject);
         }
 
         /// <summary>
@@ -198,10 +310,19 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
         /// </summary>
         public void RequestEmailConfirmation()
         {
+            Task.Run(async () => await RequestEmailConfirmationAsync()).Wait();
+        }
+
+        /// <summary>
+        /// Request an email with a code to confirm ownership of email. (Async)
+        /// (com.atproto.server.requestEmailConfirmation)
+        /// </summary>
+        public async Task RequestEmailConfirmationAsync()
+        {
             var endpointName = "com.atproto.server.requestEmailConfirmation";
             var parameterJsonObject = new JsonObject();
 
-            this.Parent.InvokeJsonRequest(endpointName, parameterJsonObject);
+            await this.Parent.InvokeJsonRequestAsync(endpointName, parameterJsonObject);
         }
 
         /// <summary>
@@ -210,10 +331,19 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
         /// </summary>
         public RequestEmailUpdateResult RequestEmailUpdate()
         {
+            return Task.Run(async () => await RequestEmailUpdateAsync()).Result;
+        }
+
+        /// <summary>
+        /// Request a token in order to update email. (Async)
+        /// (com.atproto.server.requestEmailUpdate)
+        /// </summary>
+        public async Task<RequestEmailUpdateResult> RequestEmailUpdateAsync()
+        {
             var endpointName = "com.atproto.server.requestEmailUpdate";
             var parameterJsonObject = new JsonObject();
 
-            var result = this.Parent.InvokeJsonRequest(endpointName, parameterJsonObject);
+            var result = await this.Parent.InvokeJsonRequestAsync(endpointName, parameterJsonObject);
             return RequestEmailUpdateResult.FromJsonObject(result);
         }
 
@@ -224,11 +354,21 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
         /// <param name="Email"></param>
         public void RequestPasswordReset(string Email)
         {
+            Task.Run(async () => await RequestPasswordResetAsync(Email)).Wait();
+        }
+
+        /// <summary>
+        /// Initiate a user account password reset via email. (Async)
+        /// (com.atproto.server.requestPasswordReset)
+        /// </summary>
+        /// <param name="Email"></param>
+        public async Task RequestPasswordResetAsync(string Email)
+        {
             var endpointName = "com.atproto.server.requestPasswordReset";
             var parameterJsonObject = new JsonObject();
             if (Email != default(string)) parameterJsonObject["email"] = Email;
 
-            this.Parent.InvokeJsonRequest(endpointName, parameterJsonObject);
+            await this.Parent.InvokeJsonRequestAsync(endpointName, parameterJsonObject);
         }
 
         /// <summary>
@@ -238,11 +378,21 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
         /// <param name="Did"></param>
         public ReserveSigningKeyResult ReserveSigningKey(string Did = default(string))
         {
+            return Task.Run(async () => await ReserveSigningKeyAsync(Did)).Result;
+        }
+
+        /// <summary>
+        /// Reserve a repo signing key for account creation. (Async)
+        /// (com.atproto.server.reserveSigningKey)
+        /// </summary>
+        /// <param name="Did"></param>
+        public async Task<ReserveSigningKeyResult> ReserveSigningKeyAsync(string Did = default(string))
+        {
             var endpointName = "com.atproto.server.reserveSigningKey";
             var parameterJsonObject = new JsonObject();
             if (Did != default(string)) parameterJsonObject["did"] = Did;
 
-            var result = this.Parent.InvokeJsonRequest(endpointName, parameterJsonObject);
+            var result = await this.Parent.InvokeJsonRequestAsync(endpointName, parameterJsonObject);
             return ReserveSigningKeyResult.FromJsonObject(result);
         }
 
@@ -254,12 +404,23 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
         /// <param name="Password"></param>
         public void ResetPassword(string Token, string Password)
         {
+            Task.Run(async () => await ResetPasswordAsync(Token, Password)).Wait();
+        }
+
+        /// <summary>
+        /// Reset a user account password using a token. (Async)
+        /// (com.atproto.server.resetPassword)
+        /// </summary>
+        /// <param name="Token"></param>
+        /// <param name="Password"></param>
+        public async Task ResetPasswordAsync(string Token, string Password)
+        {
             var endpointName = "com.atproto.server.resetPassword";
             var parameterJsonObject = new JsonObject();
             if (Token != default(string)) parameterJsonObject["token"] = Token;
             if (Password != default(string)) parameterJsonObject["password"] = Password;
 
-            this.Parent.InvokeJsonRequest(endpointName, parameterJsonObject);
+            await this.Parent.InvokeJsonRequestAsync(endpointName, parameterJsonObject);
         }
 
         /// <summary>
@@ -269,11 +430,21 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
         /// <param name="Name"></param>
         public void RevokeAppPassword(string Name)
         {
+            Task.Run(async () => await RevokeAppPasswordAsync(Name)).Wait();
+        }
+
+        /// <summary>
+        /// Revoke an App Password by name. (Async)
+        /// (com.atproto.server.revokeAppPassword)
+        /// </summary>
+        /// <param name="Name"></param>
+        public async Task RevokeAppPasswordAsync(string Name)
+        {
             var endpointName = "com.atproto.server.revokeAppPassword";
             var parameterJsonObject = new JsonObject();
             if (Name != default(string)) parameterJsonObject["name"] = Name;
 
-            this.Parent.InvokeJsonRequest(endpointName, parameterJsonObject);
+            await this.Parent.InvokeJsonRequestAsync(endpointName, parameterJsonObject);
         }
 
         /// <summary>
@@ -284,12 +455,23 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
         /// <param name="Token"></param>
         public void UpdateEmail(string Email, string Token = default(string))
         {
+            Task.Run(async () => await UpdateEmailAsync(Email, Token)).Wait();
+        }
+
+        /// <summary>
+        /// Update an account's email. (Async)
+        /// (com.atproto.server.updateEmail)
+        /// </summary>
+        /// <param name="Email"></param>
+        /// <param name="Token"></param>
+        public async Task UpdateEmailAsync(string Email, string Token = default(string))
+        {
             var endpointName = "com.atproto.server.updateEmail";
             var parameterJsonObject = new JsonObject();
             if (Email != default(string)) parameterJsonObject["email"] = Email;
             if (Token != default(string)) parameterJsonObject["token"] = Token;
 
-            this.Parent.InvokeJsonRequest(endpointName, parameterJsonObject);
+            await this.Parent.InvokeJsonRequestAsync(endpointName, parameterJsonObject);
         }
 
         /// <summary>
@@ -344,7 +526,7 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
                 if (this.RefreshJwt != default(string)) result["refreshJwt"] = this.RefreshJwt;
                 if (this.Handle != default(string)) result["handle"] = this.Handle;
                 if (this.Did != default(string)) result["did"] = this.Did;
-                //if (this.DidDoc != default(Object)) result["didDoc"] = this.DidDoc;
+                if (this.DidDoc != default(Object)) result["didDoc"] = this.DidDoc;
                 return result;
             }
 
@@ -442,14 +624,14 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
             public JsonObject ToJsonObject()
             {
                 var result = new JsonObject();
-                //if (this.Codes != default(Object[])) result["codes"] = this.Codes;
+                if (this.Codes != default(Object[])) result["codes"] = this.Codes;
                 return result;
             }
 
             public static CreateInviteCodesResult FromJsonObject(JsonObject source)
             {
                 var result = new CreateInviteCodesResult();
-                //if (source.ContainsKey("codes")) result.Codes = (Object[])source["codes"];
+                if (source.ContainsKey("codes")) result.Codes = (Object[])source["codes"];
                 return result;
             }
         }
@@ -522,7 +704,7 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
                 if (this.RefreshJwt != default(string)) result["refreshJwt"] = this.RefreshJwt;
                 if (this.Handle != default(string)) result["handle"] = this.Handle;
                 if (this.Did != default(string)) result["did"] = this.Did;
-                //if (this.DidDoc != default(Object)) result["didDoc"] = this.DidDoc;
+                if (this.DidDoc != default(Object)) result["didDoc"] = this.DidDoc;
                 if (this.Email != default(string)) result["email"] = this.Email;
                 if (this.EmailConfirmed != default(bool)) result["emailConfirmed"] = this.EmailConfirmed;
                 return result;
@@ -594,7 +776,7 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
                 if (this.RefreshJwt != default(string)) result["refreshJwt"] = this.RefreshJwt;
                 if (this.Handle != default(string)) result["handle"] = this.Handle;
                 if (this.Did != default(string)) result["did"] = this.Did;
-                //if (this.DidDoc != default(Object)) result["didDoc"] = this.DidDoc;
+                if (this.DidDoc != default(Object)) result["didDoc"] = this.DidDoc;
                 return result;
             }
 
@@ -691,7 +873,7 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
             {
                 var result = new JsonObject();
                 if (this.Account != default(string)) result["account"] = this.Account;
-                //if (this.Codes != default(Object[])) result["codes"] = this.Codes;
+                if (this.Codes != default(Object[])) result["codes"] = this.Codes;
                 return result;
             }
 
@@ -699,7 +881,7 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
             {
                 var result = new AccountCodes();
                 if (source.ContainsKey("account")) result.Account = (string)source["account"];
-                //if (source.ContainsKey("codes")) result.Codes = (Object[])source["codes"];
+                if (source.ContainsKey("codes")) result.Codes = (Object[])source["codes"];
                 return result;
             }
         }
@@ -774,7 +956,7 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
                 if (this.ForAccount != default(string)) result["forAccount"] = this.ForAccount;
                 if (this.CreatedBy != default(string)) result["createdBy"] = this.CreatedBy;
                 if (this.CreatedAt != default(string)) result["createdAt"] = this.CreatedAt;
-                //if (this.Uses != default(Object[])) result["uses"] = this.Uses;
+                if (this.Uses != default(Object[])) result["uses"] = this.Uses;
                 return result;
             }
 
@@ -787,7 +969,7 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
                 if (source.ContainsKey("forAccount")) result.ForAccount = (string)source["forAccount"];
                 if (source.ContainsKey("createdBy")) result.CreatedBy = (string)source["createdBy"];
                 if (source.ContainsKey("createdAt")) result.CreatedAt = (string)source["createdAt"];
-                //if (source.ContainsKey("uses")) result.Uses = (Object[])source["uses"];
+                if (source.ContainsKey("uses")) result.Uses = (Object[])source["uses"];
                 return result;
             }
         }
