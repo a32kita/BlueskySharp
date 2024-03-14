@@ -29,5 +29,11 @@ namespace BlueskySharp.Dev.LexiconReaderCore
             get;
             set;
         }
+
+        public bool JsonConvertionUnsupported
+        {
+            get;
+            set;
+        }
     }
 }

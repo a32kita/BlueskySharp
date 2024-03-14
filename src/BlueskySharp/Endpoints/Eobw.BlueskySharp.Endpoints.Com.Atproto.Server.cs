@@ -26,8 +26,8 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
         /// Confirm an email using a token from com.atproto.server.requestEmailConfirmation.
         /// (com.atproto.server.confirmEmail)
         /// </summary>
-        /// <param name="Email"></param>
-        /// <param name="Token"></param>
+        /// <param name="Email">(Email)</param>
+        /// <param name="Token">(Token)</param>
         public void ConfirmEmail(string Email, string Token)
         {
             Task.Run(async () => await ConfirmEmailAsync(Email, Token)).Wait();
@@ -37,8 +37,8 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
         /// Confirm an email using a token from com.atproto.server.requestEmailConfirmation. (Async)
         /// (com.atproto.server.confirmEmail)
         /// </summary>
-        /// <param name="Email"></param>
-        /// <param name="Token"></param>
+        /// <param name="Email">(Email)</param>
+        /// <param name="Token">(Token)</param>
         public async Task ConfirmEmailAsync(string Email, string Token)
         {
             var endpointName = "com.atproto.server.confirmEmail";
@@ -53,34 +53,34 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
         /// Create an account.
         /// (com.atproto.server.createAccount)
         /// </summary>
-        /// <param name="Handle"></param>
-        /// <param name="Email"></param>
-        /// <param name="Did"></param>
-        /// <param name="InviteCode"></param>
-        /// <param name="VerificationCode"></param>
-        /// <param name="VerificationPhone"></param>
-        /// <param name="Password"></param>
-        /// <param name="RecoveryKey"></param>
-        /// <param name="PlcOp"></param>
-        public CreateAccountResult CreateAccount(string Handle, string Email = default(string), string Did = default(string), string InviteCode = default(string), string VerificationCode = default(string), string VerificationPhone = default(string), string Password = default(string), string RecoveryKey = default(string), Object PlcOp = default(Object))
+        /// <param name="Handle">(Handle)</param>
+        /// <param name="Email">(Email)</param>
+        /// <param name="Did">(Did)</param>
+        /// <param name="InviteCode">(InviteCode)</param>
+        /// <param name="VerificationCode">(VerificationCode)</param>
+        /// <param name="VerificationPhone">(VerificationPhone)</param>
+        /// <param name="Password">(Password)</param>
+        /// <param name="RecoveryKey">(RecoveryKey)</param>
+        /// <param name="PlcOp">(PlcOp)</param>
+        public CreateAccountResult CreateAccount(string Handle, string Email = default(string), string Did = default(string), string InviteCode = default(string), string VerificationCode = default(string), string VerificationPhone = default(string), string Password = default(string), string RecoveryKey = default(string) /* Unsupported: Object PlcOp = default(Object) */)
         {
-            return Task.Run(async () => await CreateAccountAsync(Handle, Email, Did, InviteCode, VerificationCode, VerificationPhone, Password, RecoveryKey, PlcOp)).Result;
+            return Task.Run(async () => await CreateAccountAsync(Handle, Email, Did, InviteCode, VerificationCode, VerificationPhone, Password, RecoveryKey)).Result;
         }
 
         /// <summary>
         /// Create an account. (Async)
         /// (com.atproto.server.createAccount)
         /// </summary>
-        /// <param name="Handle"></param>
-        /// <param name="Email"></param>
-        /// <param name="Did"></param>
-        /// <param name="InviteCode"></param>
-        /// <param name="VerificationCode"></param>
-        /// <param name="VerificationPhone"></param>
-        /// <param name="Password"></param>
-        /// <param name="RecoveryKey"></param>
-        /// <param name="PlcOp"></param>
-        public async Task<CreateAccountResult> CreateAccountAsync(string Handle, string Email = default(string), string Did = default(string), string InviteCode = default(string), string VerificationCode = default(string), string VerificationPhone = default(string), string Password = default(string), string RecoveryKey = default(string), Object PlcOp = default(Object))
+        /// <param name="Handle">(Handle)</param>
+        /// <param name="Email">(Email)</param>
+        /// <param name="Did">(Did)</param>
+        /// <param name="InviteCode">(InviteCode)</param>
+        /// <param name="VerificationCode">(VerificationCode)</param>
+        /// <param name="VerificationPhone">(VerificationPhone)</param>
+        /// <param name="Password">(Password)</param>
+        /// <param name="RecoveryKey">(RecoveryKey)</param>
+        /// <param name="PlcOp">(PlcOp)</param>
+        public async Task<CreateAccountResult> CreateAccountAsync(string Handle, string Email = default(string), string Did = default(string), string InviteCode = default(string), string VerificationCode = default(string), string VerificationPhone = default(string), string Password = default(string), string RecoveryKey = default(string) /* Unsupported: Object PlcOp = default(Object) */)
         {
             var endpointName = "com.atproto.server.createAccount";
             var parameterJsonObject = new JsonObject();
@@ -92,7 +92,7 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
             if (VerificationPhone != default(string)) parameterJsonObject["verificationPhone"] = VerificationPhone;
             if (Password != default(string)) parameterJsonObject["password"] = Password;
             if (RecoveryKey != default(string)) parameterJsonObject["recoveryKey"] = RecoveryKey;
-            if (PlcOp != default(Object)) parameterJsonObject["plcOp"] = PlcOp;
+            /* Unsupported */ // if (PlcOp != default(Object)) parameterJsonObject["plcOp"] = PlcOp;
 
             var result = await this.Parent.InvokeJsonRequestAsync(endpointName, parameterJsonObject);
             return CreateAccountResult.FromJsonObject(result);
@@ -102,7 +102,7 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
         /// Create an App Password.
         /// (com.atproto.server.createAppPassword)
         /// </summary>
-        /// <param name="Name"></param>
+        /// <param name="Name">(Name)</param>
         public AppPassword CreateAppPassword(string Name)
         {
             return Task.Run(async () => await CreateAppPasswordAsync(Name)).Result;
@@ -112,7 +112,7 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
         /// Create an App Password. (Async)
         /// (com.atproto.server.createAppPassword)
         /// </summary>
-        /// <param name="Name"></param>
+        /// <param name="Name">(Name)</param>
         public async Task<AppPassword> CreateAppPasswordAsync(string Name)
         {
             var endpointName = "com.atproto.server.createAppPassword";
@@ -127,8 +127,8 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
         /// Create an invite code.
         /// (com.atproto.server.createInviteCode)
         /// </summary>
-        /// <param name="UseCount"></param>
-        /// <param name="ForAccount"></param>
+        /// <param name="UseCount">(UseCount)</param>
+        /// <param name="ForAccount">(ForAccount)</param>
         public CreateInviteCodeResult CreateInviteCode(int UseCount, string ForAccount = default(string))
         {
             return Task.Run(async () => await CreateInviteCodeAsync(UseCount, ForAccount)).Result;
@@ -138,8 +138,8 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
         /// Create an invite code. (Async)
         /// (com.atproto.server.createInviteCode)
         /// </summary>
-        /// <param name="UseCount"></param>
-        /// <param name="ForAccount"></param>
+        /// <param name="UseCount">(UseCount)</param>
+        /// <param name="ForAccount">(ForAccount)</param>
         public async Task<CreateInviteCodeResult> CreateInviteCodeAsync(int UseCount, string ForAccount = default(string))
         {
             var endpointName = "com.atproto.server.createInviteCode";
@@ -155,28 +155,28 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
         /// Create invite codes.
         /// (com.atproto.server.createInviteCodes)
         /// </summary>
-        /// <param name="CodeCount"></param>
-        /// <param name="UseCount"></param>
-        /// <param name="ForAccounts"></param>
-        public CreateInviteCodesResult CreateInviteCodes(int CodeCount, int UseCount, Object[] ForAccounts = default(Object[]))
+        /// <param name="CodeCount">(CodeCount)</param>
+        /// <param name="UseCount">(UseCount)</param>
+        /// <param name="ForAccounts">(ForAccounts)</param>
+        public CreateInviteCodesResult CreateInviteCodes(int CodeCount, int UseCount /* Unsupported: Object[] ForAccounts = default(Object[]) */)
         {
-            return Task.Run(async () => await CreateInviteCodesAsync(CodeCount, UseCount, ForAccounts)).Result;
+            return Task.Run(async () => await CreateInviteCodesAsync(CodeCount, UseCount)).Result;
         }
 
         /// <summary>
         /// Create invite codes. (Async)
         /// (com.atproto.server.createInviteCodes)
         /// </summary>
-        /// <param name="CodeCount"></param>
-        /// <param name="UseCount"></param>
-        /// <param name="ForAccounts"></param>
-        public async Task<CreateInviteCodesResult> CreateInviteCodesAsync(int CodeCount, int UseCount, Object[] ForAccounts = default(Object[]))
+        /// <param name="CodeCount">(CodeCount)</param>
+        /// <param name="UseCount">(UseCount)</param>
+        /// <param name="ForAccounts">(ForAccounts)</param>
+        public async Task<CreateInviteCodesResult> CreateInviteCodesAsync(int CodeCount, int UseCount /* Unsupported: Object[] ForAccounts = default(Object[]) */)
         {
             var endpointName = "com.atproto.server.createInviteCodes";
             var parameterJsonObject = new JsonObject();
             if (CodeCount != default(int)) parameterJsonObject["codeCount"] = CodeCount;
             if (UseCount != default(int)) parameterJsonObject["useCount"] = UseCount;
-            if (ForAccounts != default(Object[])) parameterJsonObject["forAccounts"] = ForAccounts;
+            /* Unsupported */ // if (ForAccounts != default(Object[])) parameterJsonObject["forAccounts"] = ForAccounts;
 
             var result = await this.Parent.InvokeJsonRequestAsync(endpointName, parameterJsonObject);
             return CreateInviteCodesResult.FromJsonObject(result);
@@ -186,8 +186,8 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
         /// Create an authentication session.
         /// (com.atproto.server.createSession)
         /// </summary>
-        /// <param name="Identifier"></param>
-        /// <param name="Password"></param>
+        /// <param name="Identifier">(Identifier)</param>
+        /// <param name="Password">(Password)</param>
         public CreateSessionResult CreateSession(string Identifier, string Password)
         {
             return Task.Run(async () => await CreateSessionAsync(Identifier, Password)).Result;
@@ -197,8 +197,8 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
         /// Create an authentication session. (Async)
         /// (com.atproto.server.createSession)
         /// </summary>
-        /// <param name="Identifier"></param>
-        /// <param name="Password"></param>
+        /// <param name="Identifier">(Identifier)</param>
+        /// <param name="Password">(Password)</param>
         public async Task<CreateSessionResult> CreateSessionAsync(string Identifier, string Password)
         {
             var endpointName = "com.atproto.server.createSession";
@@ -214,9 +214,9 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
         /// Delete an actor's account with a token and password.
         /// (com.atproto.server.deleteAccount)
         /// </summary>
-        /// <param name="Did"></param>
-        /// <param name="Password"></param>
-        /// <param name="Token"></param>
+        /// <param name="Did">(Did)</param>
+        /// <param name="Password">(Password)</param>
+        /// <param name="Token">(Token)</param>
         public void DeleteAccount(string Did, string Password, string Token)
         {
             Task.Run(async () => await DeleteAccountAsync(Did, Password, Token)).Wait();
@@ -226,9 +226,9 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
         /// Delete an actor's account with a token and password. (Async)
         /// (com.atproto.server.deleteAccount)
         /// </summary>
-        /// <param name="Did"></param>
-        /// <param name="Password"></param>
-        /// <param name="Token"></param>
+        /// <param name="Did">(Did)</param>
+        /// <param name="Password">(Password)</param>
+        /// <param name="Token">(Token)</param>
         public async Task DeleteAccountAsync(string Did, string Password, string Token)
         {
             var endpointName = "com.atproto.server.deleteAccount";
@@ -351,7 +351,7 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
         /// Initiate a user account password reset via email.
         /// (com.atproto.server.requestPasswordReset)
         /// </summary>
-        /// <param name="Email"></param>
+        /// <param name="Email">(Email)</param>
         public void RequestPasswordReset(string Email)
         {
             Task.Run(async () => await RequestPasswordResetAsync(Email)).Wait();
@@ -361,7 +361,7 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
         /// Initiate a user account password reset via email. (Async)
         /// (com.atproto.server.requestPasswordReset)
         /// </summary>
-        /// <param name="Email"></param>
+        /// <param name="Email">(Email)</param>
         public async Task RequestPasswordResetAsync(string Email)
         {
             var endpointName = "com.atproto.server.requestPasswordReset";
@@ -375,7 +375,7 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
         /// Reserve a repo signing key for account creation.
         /// (com.atproto.server.reserveSigningKey)
         /// </summary>
-        /// <param name="Did"></param>
+        /// <param name="Did">(Did)</param>
         public ReserveSigningKeyResult ReserveSigningKey(string Did = default(string))
         {
             return Task.Run(async () => await ReserveSigningKeyAsync(Did)).Result;
@@ -385,7 +385,7 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
         /// Reserve a repo signing key for account creation. (Async)
         /// (com.atproto.server.reserveSigningKey)
         /// </summary>
-        /// <param name="Did"></param>
+        /// <param name="Did">(Did)</param>
         public async Task<ReserveSigningKeyResult> ReserveSigningKeyAsync(string Did = default(string))
         {
             var endpointName = "com.atproto.server.reserveSigningKey";
@@ -400,8 +400,8 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
         /// Reset a user account password using a token.
         /// (com.atproto.server.resetPassword)
         /// </summary>
-        /// <param name="Token"></param>
-        /// <param name="Password"></param>
+        /// <param name="Token">(Token)</param>
+        /// <param name="Password">(Password)</param>
         public void ResetPassword(string Token, string Password)
         {
             Task.Run(async () => await ResetPasswordAsync(Token, Password)).Wait();
@@ -411,8 +411,8 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
         /// Reset a user account password using a token. (Async)
         /// (com.atproto.server.resetPassword)
         /// </summary>
-        /// <param name="Token"></param>
-        /// <param name="Password"></param>
+        /// <param name="Token">(Token)</param>
+        /// <param name="Password">(Password)</param>
         public async Task ResetPasswordAsync(string Token, string Password)
         {
             var endpointName = "com.atproto.server.resetPassword";
@@ -427,7 +427,7 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
         /// Revoke an App Password by name.
         /// (com.atproto.server.revokeAppPassword)
         /// </summary>
-        /// <param name="Name"></param>
+        /// <param name="Name">(Name)</param>
         public void RevokeAppPassword(string Name)
         {
             Task.Run(async () => await RevokeAppPasswordAsync(Name)).Wait();
@@ -437,7 +437,7 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
         /// Revoke an App Password by name. (Async)
         /// (com.atproto.server.revokeAppPassword)
         /// </summary>
-        /// <param name="Name"></param>
+        /// <param name="Name">(Name)</param>
         public async Task RevokeAppPasswordAsync(string Name)
         {
             var endpointName = "com.atproto.server.revokeAppPassword";
@@ -451,8 +451,8 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
         /// Update an account's email.
         /// (com.atproto.server.updateEmail)
         /// </summary>
-        /// <param name="Email"></param>
-        /// <param name="Token"></param>
+        /// <param name="Email">(Email)</param>
+        /// <param name="Token">(Token)</param>
         public void UpdateEmail(string Email, string Token = default(string))
         {
             Task.Run(async () => await UpdateEmailAsync(Email, Token)).Wait();
@@ -462,8 +462,8 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
         /// Update an account's email. (Async)
         /// (com.atproto.server.updateEmail)
         /// </summary>
-        /// <param name="Email"></param>
-        /// <param name="Token"></param>
+        /// <param name="Email">(Email)</param>
+        /// <param name="Token">(Token)</param>
         public async Task UpdateEmailAsync(string Email, string Token = default(string))
         {
             var endpointName = "com.atproto.server.updateEmail";
@@ -511,6 +511,7 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
                 get; set;
             }
 
+            /* JSON Convertion Unsupported
             /// <summary>
             /// 
             /// </summary>
@@ -518,6 +519,7 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
             {
                 get; set;
             }
+            */
 
             public JsonObject ToJsonObject()
             {
@@ -526,7 +528,7 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
                 if (this.RefreshJwt != default(string)) result["refreshJwt"] = this.RefreshJwt;
                 if (this.Handle != default(string)) result["handle"] = this.Handle;
                 if (this.Did != default(string)) result["did"] = this.Did;
-                if (this.DidDoc != default(Object)) result["didDoc"] = this.DidDoc;
+                /* Unsupported */ // if (this.DidDoc != default(Object)) result["didDoc"] = this.DidDoc;
                 return result;
             }
 
@@ -537,7 +539,7 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
                 if (source.ContainsKey("refreshJwt")) result.RefreshJwt = (string)source["refreshJwt"];
                 if (source.ContainsKey("handle")) result.Handle = (string)source["handle"];
                 if (source.ContainsKey("did")) result.Did = (string)source["did"];
-                if (source.ContainsKey("didDoc")) result.DidDoc = (Object)source["didDoc"];
+                /* Unsupported */ // if (source.ContainsKey("didDoc")) result.DidDoc = (Object)source["didDoc"];
                 return result;
             }
         }
@@ -613,6 +615,7 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
         /// </summary>
         public class CreateInviteCodesResult
         {
+            /* JSON Convertion Unsupported
             /// <summary>
             /// 
             /// </summary>
@@ -620,18 +623,19 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
             {
                 get; set;
             }
+            */
 
             public JsonObject ToJsonObject()
             {
                 var result = new JsonObject();
-                if (this.Codes != default(Object[])) result["codes"] = this.Codes;
+                /* Unsupported */ // if (this.Codes != default(Object[])) result["codes"] = this.Codes;
                 return result;
             }
 
             public static CreateInviteCodesResult FromJsonObject(JsonObject source)
             {
                 var result = new CreateInviteCodesResult();
-                if (source.ContainsKey("codes")) result.Codes = (Object[])source["codes"];
+                /* Unsupported */ // if (source.ContainsKey("codes")) result.Codes = (Object[])source["codes"];
                 return result;
             }
         }
@@ -673,6 +677,7 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
                 get; set;
             }
 
+            /* JSON Convertion Unsupported
             /// <summary>
             /// 
             /// </summary>
@@ -680,6 +685,7 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
             {
                 get; set;
             }
+            */
 
             /// <summary>
             /// 
@@ -704,7 +710,7 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
                 if (this.RefreshJwt != default(string)) result["refreshJwt"] = this.RefreshJwt;
                 if (this.Handle != default(string)) result["handle"] = this.Handle;
                 if (this.Did != default(string)) result["did"] = this.Did;
-                if (this.DidDoc != default(Object)) result["didDoc"] = this.DidDoc;
+                /* Unsupported */ // if (this.DidDoc != default(Object)) result["didDoc"] = this.DidDoc;
                 if (this.Email != default(string)) result["email"] = this.Email;
                 if (this.EmailConfirmed != default(bool)) result["emailConfirmed"] = this.EmailConfirmed;
                 return result;
@@ -717,7 +723,7 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
                 if (source.ContainsKey("refreshJwt")) result.RefreshJwt = (string)source["refreshJwt"];
                 if (source.ContainsKey("handle")) result.Handle = (string)source["handle"];
                 if (source.ContainsKey("did")) result.Did = (string)source["did"];
-                if (source.ContainsKey("didDoc")) result.DidDoc = (Object)source["didDoc"];
+                /* Unsupported */ // if (source.ContainsKey("didDoc")) result.DidDoc = (Object)source["didDoc"];
                 if (source.ContainsKey("email")) result.Email = (string)source["email"];
                 if (source.ContainsKey("emailConfirmed")) result.EmailConfirmed = (bool)source["emailConfirmed"];
                 return result;
@@ -761,6 +767,7 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
                 get; set;
             }
 
+            /* JSON Convertion Unsupported
             /// <summary>
             /// 
             /// </summary>
@@ -768,6 +775,7 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
             {
                 get; set;
             }
+            */
 
             public JsonObject ToJsonObject()
             {
@@ -776,7 +784,7 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
                 if (this.RefreshJwt != default(string)) result["refreshJwt"] = this.RefreshJwt;
                 if (this.Handle != default(string)) result["handle"] = this.Handle;
                 if (this.Did != default(string)) result["did"] = this.Did;
-                if (this.DidDoc != default(Object)) result["didDoc"] = this.DidDoc;
+                /* Unsupported */ // if (this.DidDoc != default(Object)) result["didDoc"] = this.DidDoc;
                 return result;
             }
 
@@ -787,7 +795,7 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
                 if (source.ContainsKey("refreshJwt")) result.RefreshJwt = (string)source["refreshJwt"];
                 if (source.ContainsKey("handle")) result.Handle = (string)source["handle"];
                 if (source.ContainsKey("did")) result.Did = (string)source["did"];
-                if (source.ContainsKey("didDoc")) result.DidDoc = (Object)source["didDoc"];
+                /* Unsupported */ // if (source.ContainsKey("didDoc")) result.DidDoc = (Object)source["didDoc"];
                 return result;
             }
         }
@@ -861,6 +869,7 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
                 get; set;
             }
 
+            /* JSON Convertion Unsupported
             /// <summary>
             /// 
             /// </summary>
@@ -868,12 +877,13 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
             {
                 get; set;
             }
+            */
 
             public JsonObject ToJsonObject()
             {
                 var result = new JsonObject();
                 if (this.Account != default(string)) result["account"] = this.Account;
-                if (this.Codes != default(Object[])) result["codes"] = this.Codes;
+                /* Unsupported */ // if (this.Codes != default(Object[])) result["codes"] = this.Codes;
                 return result;
             }
 
@@ -881,7 +891,7 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
             {
                 var result = new AccountCodes();
                 if (source.ContainsKey("account")) result.Account = (string)source["account"];
-                if (source.ContainsKey("codes")) result.Codes = (Object[])source["codes"];
+                /* Unsupported */ // if (source.ContainsKey("codes")) result.Codes = (Object[])source["codes"];
                 return result;
             }
         }
@@ -939,6 +949,7 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
                 get; set;
             }
 
+            /* JSON Convertion Unsupported
             /// <summary>
             /// 
             /// </summary>
@@ -946,6 +957,7 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
             {
                 get; set;
             }
+            */
 
             public JsonObject ToJsonObject()
             {
@@ -956,7 +968,7 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
                 if (this.ForAccount != default(string)) result["forAccount"] = this.ForAccount;
                 if (this.CreatedBy != default(string)) result["createdBy"] = this.CreatedBy;
                 if (this.CreatedAt != default(string)) result["createdAt"] = this.CreatedAt;
-                if (this.Uses != default(Object[])) result["uses"] = this.Uses;
+                /* Unsupported */ // if (this.Uses != default(Object[])) result["uses"] = this.Uses;
                 return result;
             }
 
@@ -969,7 +981,7 @@ namespace Eobw.BlueskySharp.Endpoints.Com.Atproto
                 if (source.ContainsKey("forAccount")) result.ForAccount = (string)source["forAccount"];
                 if (source.ContainsKey("createdBy")) result.CreatedBy = (string)source["createdBy"];
                 if (source.ContainsKey("createdAt")) result.CreatedAt = (string)source["createdAt"];
-                if (source.ContainsKey("uses")) result.Uses = (Object[])source["uses"];
+                /* Unsupported */ // if (source.ContainsKey("uses")) result.Uses = (Object[])source["uses"];
                 return result;
             }
         }

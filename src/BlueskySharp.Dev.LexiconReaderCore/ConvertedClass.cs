@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -81,9 +82,22 @@ namespace BlueskySharp.Dev.LexiconReaderCore
                     return "bool";
                 case "array":
                     return "Object[]";
+                //case "unknown":
+                //    return "Object";
                 default:
                     return "Object";
             }
+        }
+
+        private static bool s_isJsonConvertionUnsupported(PropertyDefinition propDef)
+        {
+            // JSON への変換に対応していない型 (具体的な型が不明)
+            // TODO: 変換対象とするためにはどう扱うべきか
+
+            if (propDef.Type == "unknown" || propDef.Type == "array")
+                return true;
+
+            return false;
         }
 
         //private static string s_valueToCSharpSourceValue(ConvertedProperty property, string value)
@@ -127,8 +141,9 @@ namespace BlueskySharp.Dev.LexiconReaderCore
                         var inputParameter = new ConvertedParameter();
                         inputParameter.Name = s_convertToPascalCase(inputProperty.Name);
                         inputParameter.Required = pepds.Procedure.Input.Schema.Required?.Contains(inputProperty.Name) ?? false;
-                        inputParameter.Summary = inputParameter.Summary ?? String.Empty;
+                        inputParameter.Summary = inputParameter.Summary ?? "(" + inputParameter.Name + ")";
                         inputParameter.Type = s_getDotnetTypeName(inputProperty);
+                        inputParameter.JsonConvertionUnsupported = s_isJsonConvertionUnsupported(inputProperty);
 
                         inputParameters.Add(inputParameter);
                     }
@@ -153,6 +168,7 @@ namespace BlueskySharp.Dev.LexiconReaderCore
                             rvProperty.Name = s_convertToPascalCase(outputProperty.Name);
                             rvProperty.Required = procedureOutputSchema.Required?.Contains(outputProperty.Name) ?? false;
                             rvProperty.Type = s_getDotnetTypeName(outputProperty);
+                            rvProperty.JsonConvertionUnsupported = s_isJsonConvertionUnsupported(outputProperty);
 
                             returnValueProperties.Add(rvProperty);
                         }
@@ -200,6 +216,7 @@ namespace BlueskySharp.Dev.LexiconReaderCore
                         cvProperty.Name = s_convertToPascalCase(propDef.Name);
                         cvProperty.Required = objDefKvp.Value.Required?.Contains(propDef.Name) ?? false;
                         cvProperty.Type = s_getDotnetTypeName(propDef);
+                        cvProperty.JsonConvertionUnsupported = s_isJsonConvertionUnsupported(propDef);
 
                         convertedProperties.Add(cvProperty);
                     }
@@ -254,6 +271,27 @@ namespace BlueskySharp.Dev.LexiconReaderCore
             foreach (var method in this.Methods)
             {
                 var returnValueIsVoid = String.IsNullOrEmpty(method.ReturnValue.TypeName) || method.ReturnValue.TypeName == "void";
+                var methodParametersLineSb = new StringBuilder();
+                foreach (var parameter in method.Parameters)
+                {
+                    if (parameter.JsonConvertionUnsupported)
+                    {
+                        if (parameter != method.Parameters.First())
+                            methodParametersLineSb.Length -= 2;
+
+                        methodParametersLineSb.Append(" /* Unsupported: ");
+                    }
+
+                    methodParametersLineSb.Append(String.Format("{0} {1}", parameter.Type, parameter.Name));
+                    if (!parameter.Required)
+                        methodParametersLineSb.Append(String.Format(" = default({0})", parameter.Type));
+                    if (parameter.JsonConvertionUnsupported)
+                        methodParametersLineSb.Append(" */");
+
+                    if (parameter != method.Parameters.Last())
+                        methodParametersLineSb.Append(", ");
+                }
+                var methodParametersLine = methodParametersLineSb.ToString();
 
                 textWriter.WriteLine("        /// <summary>");
                 textWriter.WriteLine("        /// {0}", method.Summary);
@@ -263,9 +301,9 @@ namespace BlueskySharp.Dev.LexiconReaderCore
                 {
                     textWriter.WriteLine("        /// <param name=\"{0}\">{1}</param>", parameter.Name, parameter.Summary);
                 }
-                textWriter.Write("        public {0} {1}", method.ReturnValue.TypeName, method.Name);
-                textWriter.Write("({0})", String.Join(", ", method.Parameters.Select(p => p.Type + " " + p.Name + (p.Required ? "" : " = default(" + p.Type + ")"))));
-                textWriter.WriteLine();
+                textWriter.Write("        public {0} {1}(", method.ReturnValue.TypeName, method.Name);
+                //textWriter.Write("({0})", String.Join(", ", method.Parameters.Select(p => p.Type + " " + p.Name + (p.Required ? "" : " = default(" + p.Type + ")"))));
+                textWriter.WriteLine("{0})", methodParametersLine);
                 textWriter.WriteLine("        {");
 
                 textWriter.Write("            ");
@@ -274,7 +312,7 @@ namespace BlueskySharp.Dev.LexiconReaderCore
                     textWriter.Write("return ");
                 }
                 textWriter.Write("Task.Run(async () => await {0}Async(", method.Name);
-                textWriter.Write(String.Join(", ", method.Parameters.Select(p => p.Name)));
+                textWriter.Write(String.Join(", ", method.Parameters.Where(p => !p.JsonConvertionUnsupported).Select(p => p.Name)));
                 if (returnValueIsVoid)
                 {
                     textWriter.WriteLine(")).Wait();");
@@ -297,16 +335,20 @@ namespace BlueskySharp.Dev.LexiconReaderCore
                     textWriter.WriteLine("        /// <param name=\"{0}\">{1}</param>", parameter.Name, parameter.Summary);
                 }
 
-                textWriter.Write("        public async Task{0} {1}Async", returnValueIsVoid ? "" : "<" + method.ReturnValue.TypeName + ">", method.Name);
-                textWriter.Write("({0})", String.Join(", ", method.Parameters.Select(p => p.Type + " " + p.Name + (p.Required ? "" : " = default(" + p.Type + ")"))));
-                textWriter.WriteLine();
+                textWriter.Write("        public async Task{0} {1}Async(", returnValueIsVoid ? "" : "<" + method.ReturnValue.TypeName + ">", method.Name);
+                //textWriter.Write("({0})", String.Join(", ", method.Parameters.Select(p => p.Type + " " + p.Name + (p.Required ? "" : " = default(" + p.Type + ")"))));
+                textWriter.WriteLine("{0})", methodParametersLine);
                 textWriter.WriteLine("        {");
                 textWriter.WriteLine("            var endpointName = \"{0}\";", method.EndpointName);
                 textWriter.WriteLine("            var parameterJsonObject = new JsonObject();");
 
                 foreach (var parameter in method.Parameters)
                 {
-                    textWriter.WriteLine("            if ({0} != default({1})) parameterJsonObject[\"{2}\"] = {0};", parameter.Name, parameter.Type, s_convertToCamelCase(parameter.Name));
+                    textWriter.Write("            ");
+                    if (parameter.JsonConvertionUnsupported)
+                        textWriter.Write("/* Unsupported */ // ");
+
+                    textWriter.WriteLine("if ({0} != default({1})) parameterJsonObject[\"{2}\"] = {0};", parameter.Name, parameter.Type, s_convertToCamelCase(parameter.Name));
                 }
 
                 textWriter.WriteLine();
@@ -338,6 +380,9 @@ namespace BlueskySharp.Dev.LexiconReaderCore
                 {
                     foreach (var property in entity.Properties)
                     {
+                        if (property.JsonConvertionUnsupported)
+                            textWriter.WriteLine("            /* JSON Convertion Unsupported");
+                        
                         textWriter.WriteLine("            /// <summary>");
                         textWriter.WriteLine("            /// {0}", property.Summary);
                         textWriter.WriteLine("            /// </summary>");
@@ -345,6 +390,10 @@ namespace BlueskySharp.Dev.LexiconReaderCore
                         textWriter.WriteLine("            {");
                         textWriter.WriteLine("                get; set;");
                         textWriter.WriteLine("            }");
+
+                        if (property.JsonConvertionUnsupported)
+                            textWriter.WriteLine("            */");
+
                         textWriter.WriteLine();
                     }
 
@@ -357,7 +406,11 @@ namespace BlueskySharp.Dev.LexiconReaderCore
 
                     foreach (var property in entity.Properties)
                     {
-                        textWriter.WriteLine("                if (this.{0} != default({1})) result[\"{2}\"] = this.{0};", property.Name, property.Type, s_convertToCamelCase(property.Name));
+                        textWriter.Write("                ");
+                        if (property.JsonConvertionUnsupported)
+                            textWriter.Write("/* Unsupported */ // ");
+
+                        textWriter.WriteLine("if (this.{0} != default({1})) result[\"{2}\"] = this.{0};", property.Name, property.Type, s_convertToCamelCase(property.Name));
                     }
 
                     textWriter.WriteLine("                return result;");
@@ -370,7 +423,11 @@ namespace BlueskySharp.Dev.LexiconReaderCore
 
                     foreach (var property in entity.Properties)
                     {
-                        textWriter.WriteLine("                if (source.ContainsKey(\"{0}\")) result.{1} = ({2})source[\"{0}\"];", s_convertToCamelCase(property.Name), property.Name, property.Type);
+                        textWriter.Write("                ");
+                        if (property.JsonConvertionUnsupported)
+                            textWriter.Write("/* Unsupported */ // ");
+
+                        textWriter.WriteLine("if (source.ContainsKey(\"{0}\")) result.{1} = ({2})source[\"{0}\"];", s_convertToCamelCase(property.Name), property.Name, property.Type);
                     }
 
                     textWriter.WriteLine("                return result;");
