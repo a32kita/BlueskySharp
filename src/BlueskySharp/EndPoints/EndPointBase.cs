@@ -54,8 +54,11 @@ namespace BlueskySharp.EndPoints
         }
 
 
-        protected async Task<TResult> InvokeProcedureAsync<TParam, TResult>(string path, TParam param, bool onSession = true)
+        protected async Task<TResult> InvokeProcedureAsync<TParam, TResult>(string path, TParam param, bool onSession = true, string bearer = null)
         {
+            if (onSession && !String.IsNullOrEmpty(bearer))
+                throw new ArgumentException();
+
             var fullUri = this.ServiceInfo.GetFullUri(path);
 
             using (var ms = new MemoryStream())
@@ -88,6 +91,10 @@ namespace BlueskySharp.EndPoints
                             throw new Exception("AccessJwt is empty.");
 
                         hRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                    }
+                    else if (String.IsNullOrEmpty(bearer) == false)
+                    {
+                        hRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", bearer);
                     }
 
                     using (var hResponse = await this.HttpClient.SendAsync(hRequest))
