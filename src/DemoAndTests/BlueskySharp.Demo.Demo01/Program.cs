@@ -100,7 +100,7 @@ namespace BlueskySharp.Demo.Demo01
                 var result = service.Repo.ApplyWrites(writeParam).Result;
 #endif
 
-#if false
+#if true
                 // Markdown 記法の利用
                 var md = "こんにちは！これはリンク埋め込みのテストです。\n\nこれは [GitHub へのリンク](https://github.com/) です。見えますか？";
                 //md = "hello, this is test post. This is [Link to GitHub](https://github.com/). Can you see?";
