@@ -30,6 +30,9 @@ namespace BlueskySharp.EndPoints
         internal static readonly Encoding UTF8WithOutBOMEncoding = new UTF8Encoding(false);
 
 
+        public event EventHandler Calling;
+
+
         private BlueskyService _parent;
 
         protected BlueskyServiceInfo ServiceInfo
@@ -54,26 +57,33 @@ namespace BlueskySharp.EndPoints
         }
 
 
-        protected async Task<TResult> InvokeProcedureAsync<TParam, TResult>(string path, TParam param, bool onSession = true, string bearer = null)
+        protected async Task<TResult> InvokeProcedureAsync<TParam, TResult>(string path, TParam param = default(TParam), bool onSession = true, string bearer = null, bool disableCallingEvent = false)
         {
             if (onSession && !String.IsNullOrEmpty(bearer))
                 throw new ArgumentException();
+
+            if (!disableCallingEvent)
+                this.Calling?.Invoke(this, EventArgs.Empty);
 
             var fullUri = this.ServiceInfo.GetFullUri(path);
 
             using (var ms = new MemoryStream())
             {
-#if DEBUG
-                var jsonString = JsonSerializer.Serialize(param, DefaultJsonSerializerOption);
-
-                using (var sw = new StreamWriter(ms, UTF8WithOutBOMEncoding, 512, true))
+                if (param is EmptyParam == false)
                 {
-                    sw.Write(jsonString);
-                    sw.Flush();
-                }
+#if DEBUG && false
+                    var jsonString = JsonSerializer.Serialize(param, DefaultJsonSerializerOption);
+
+                    using (var sw = new StreamWriter(ms, UTF8WithOutBOMEncoding, 512, true))
+                    {
+                        sw.Write(jsonString);
+                        sw.Flush();
+                    }
 #else
-                JsonSerializer.Serialize(ms, param, DefaultJsonSerializerOption);
+                    JsonSerializer.Serialize(ms, param, DefaultJsonSerializerOption);
 #endif
+                }
+
                 ms.Seek(0, SeekOrigin.Begin);
                 using (var streamContent = new StreamContent(ms))
                 {
@@ -99,7 +109,7 @@ namespace BlueskySharp.EndPoints
 
                     using (var hResponse = await this.HttpClient.SendAsync(hRequest))
                     {
-#if DEBUG && true
+#if DEBUG && false
                         var responseJson = await hResponse.Content.ReadAsStringAsync();
 
                         TResult deserializedResult = default(TResult);

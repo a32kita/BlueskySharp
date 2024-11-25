@@ -18,12 +18,12 @@ namespace BlueskySharp.EndPoints.Server
 
         public async Task<CreateSessionResult> CreateSessionAsync(CreateSessionParam param)
         {
-            return await this.InvokeProcedureAsync<CreateSessionParam, CreateSessionResult>("xrpc/com.atproto.server.createSession", param, false);
+            return await this.InvokeProcedureAsync<CreateSessionParam, CreateSessionResult>("xrpc/com.atproto.server.createSession", param, false, null, true);
         }
 
         public async Task<RefreshSessionResult> RefreshSessionAsync()
         {
-            return await this.InvokeProcedureAsync<EmptyParam, RefreshSessionResult>("xrpc/com.atproto.server.refreshSession", EmptyParam.Instance, false);
+            return await this.InvokeProcedureAsync<EmptyParam, RefreshSessionResult>("xrpc/com.atproto.server.refreshSession", EmptyParam.Instance, false, this.SessionInfo.RefreshJwt, true);
         }
     }
 }

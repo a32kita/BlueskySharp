@@ -4,10 +4,10 @@
     {
         static void Main(string[] args)
         {
-            Console.Write("Your handle >");
+            Console.Write("Your handle  >");
             var handle = Console.ReadLine();
 
-            Console.Write("Password    >");
+            Console.Write("App Password >");
             var password = Console.ReadLine();
 
             Console.WriteLine("Logging in ...");
