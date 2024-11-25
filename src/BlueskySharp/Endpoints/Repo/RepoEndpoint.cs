@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace BlueskySharp.Endpoints.Repo
 {
+    /// <summary>
+    /// Repo endpoint
+    /// </summary>
     public class RepoEndpoint : EndpointBase
     {
         internal RepoEndpoint(BlueskyService parent)
@@ -14,6 +17,11 @@ namespace BlueskySharp.Endpoints.Repo
             // NOP
         }
 
+        /// <summary>
+        /// Apply a batch transaction of repository creates, updates, and deletes. Requires auth, implemented by PDS.
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
         public async Task<ApplyWritesResult> ApplyWrites(ApplyWritesParam param)
         {
             return await this.InvokeProcedureAsync<ApplyWritesParam, ApplyWritesResult>("xrpc/com.atproto.repo.applyWrites", param);

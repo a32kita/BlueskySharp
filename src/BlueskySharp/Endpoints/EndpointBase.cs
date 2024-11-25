@@ -13,6 +13,9 @@ using BlueskySharp.CustomCovertersAndPolicies;
 
 namespace BlueskySharp.Endpoints
 {
+    /// <summary>
+    /// The base class for service endpoints. This class is used internally within the library.
+    /// </summary>
     public abstract class EndpointBase
     {
         internal static readonly JsonSerializerOptions DefaultJsonSerializerOption
@@ -29,33 +32,57 @@ namespace BlueskySharp.Endpoints
 
         internal static readonly Encoding UTF8WithOutBOMEncoding = new UTF8Encoding(false);
 
-
+        /// <summary>
+        /// An event that is triggered when a request to the endpoint occurs.
+        /// </summary>
         public event EventHandler Calling;
 
 
         private BlueskyService _parent;
 
+        /// <summary>
+        /// Gets information about the target service.
+        /// </summary>
         protected BlueskyServiceInfo ServiceInfo
         {
             get => this._parent.ServiceInfo;
         }
 
+        /// <summary>
+        /// Gets the HttpClient used for requests.
+        /// </summary>
         protected HttpClient HttpClient
         {
             get => this._parent.HttpClient;
         }
 
+        /// <summary>
+        /// Gets session information.
+        /// </summary>
         protected BlueskySessionInfo SessionInfo
         {
             get => this._parent.SessionInfo;
         }
 
-
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EndpointBase"/> class.
+        /// </summary>
+        /// <param name="parent">親となる <see cref="BlueskyService"/></param>
         protected EndpointBase(BlueskyService parent)
         {
             this._parent = parent;
         }
 
+        /// <summary>
+        /// Uploads content.
+        /// </summary>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="path">The API path.</param>
+        /// <param name="mimeType">The MIME type of the content.</param>
+        /// <param name="contentStream">The content stream.</param>
+        /// <param name="disableCallingEvent">Specifies whether the triggering of the Calling event is disabled.</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         protected async Task<TResult> UploadContentAsync<TResult>(string path, string mimeType, Stream contentStream, bool disableCallingEvent = false)
         {
             if (!disableCallingEvent)
@@ -90,6 +117,19 @@ namespace BlueskySharp.Endpoints
             }
         }
 
+        /// <summary>
+        /// Executes a remote procedure.
+        /// </summary>
+        /// <typeparam name="TParam"></typeparam>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="path">The API path.</param>
+        /// <param name="param">Parameters for the procedure.</param>
+        /// <param name="onSession">Specifies whether to send session information.</param>
+        /// <param name="bearer">Specify if the Bearer token to use differs from the default.</param>
+        /// <param name="disableCallingEvent">Specifies whether the triggering of the Calling event is disabled.</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+        /// <exception cref="Exception"></exception>
         protected async Task<TResult> InvokeProcedureAsync<TParam, TResult>(string path, TParam param = default(TParam), bool onSession = true, string bearer = null, bool disableCallingEvent = false)
         {
             if (onSession && !String.IsNullOrEmpty(bearer))
