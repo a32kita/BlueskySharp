@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 
 using BlueskySharp.CustomCovertersAndPolicies;
+using BlueskySharp.EndPoints.InternalHelpers;
 
 namespace BlueskySharp.EndPoints
 {
@@ -26,6 +27,25 @@ namespace BlueskySharp.EndPoints
         {
             get;
             set;
+        }
+
+        public Facet[] Facets
+        {
+            get;
+            set;
+        }
+
+
+        public static Record FromMarkdownText(string text)
+        {
+            var result = MarkdownParseResult.ParseMarkdownToFacets(text);
+
+            return new Record()
+            {
+                CreatedAt = DateTimeOffset.Now,
+                Facets = result.Facets,
+                Text = result.ParsedText,
+            };
         }
     }
 }

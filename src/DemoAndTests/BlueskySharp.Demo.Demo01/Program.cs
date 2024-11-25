@@ -99,6 +99,29 @@ namespace BlueskySharp.Demo.Demo01
 
                 var result = service.Repo.ApplyWrites(writeParam).Result;
 #endif
+
+#if false
+                // Markdown 記法の利用
+                var md = "こんにちは！これはリンク埋め込みのテストです。\n\nこれは [GitHub へのリンク](https://github.com/) です。見えますか？";
+                //md = "hello, this is test post. This is [Link to GitHub](https://github.com/). Can you see?";
+
+                var recordFromMd = EndPoints.Record.FromMarkdownText(md + "\n\n" + Guid.NewGuid());
+                recordFromMd.Embed = EndPoints.Embed.FromExternal(new EndPoints.ExternalReference()
+                {
+                    Title = "Hoge hoge Web site",
+                    Description = "hoge foo bar",
+                    Uri = new Uri("https://www.a32kita.net")
+                });
+
+                var postParam2 = new EndPoints.Repo.CreateRecordParam()
+                {
+                    Repo = handle,
+                    Collection = "app.bsky.feed.post",
+                    Record = recordFromMd,
+                };
+
+                var result2 = service.Repo.CreateRecordAsync(postParam2).Result;
+#endif
             }
 
             Console.WriteLine("Please press [Enter] key to exit ...");

@@ -104,7 +104,7 @@ namespace BlueskySharp.EndPoints
             {
                 if (param is EmptyParam == false)
                 {
-#if DEBUG && true
+#if DEBUG && false
                     var jsonString = JsonSerializer.Serialize(param, DefaultJsonSerializerOption);
 
                     using (var sw = new StreamWriter(ms, UTF8WithOutBOMEncoding, 512, true))
@@ -142,7 +142,7 @@ namespace BlueskySharp.EndPoints
 
                         using (var hResponse = await this.HttpClient.SendAsync(hRequest))
                         {
-#if DEBUG && true
+#if DEBUG && false
                             var responseJson = await hResponse.Content.ReadAsStringAsync();
 
                             TResult deserializedResult = default(TResult);
