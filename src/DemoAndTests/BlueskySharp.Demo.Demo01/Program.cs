@@ -52,7 +52,7 @@ namespace BlueskySharp.Demo.Demo01
                             {
                                 new EndPoints.AttachedImage()
                                 {
-                                    AspectRatio = new EndPoints.AspectRatio() { Width = 525, Height = 280 },
+                                    //AspectRatio = new EndPoints.AspectRatio() { Width = 525, Height = 280 },
                                     Alt = "Test image",
                                     Image = blob,
                                 }
@@ -86,7 +86,7 @@ namespace BlueskySharp.Demo.Demo01
                                     {
                                         new EndPoints.AttachedImage()
                                         {
-                                            AspectRatio = new EndPoints.AspectRatio() { Width = 525, Height = 280 },
+                                            //AspectRatio = new EndPoints.AspectRatio() { Width = 525, Height = 280 },
                                             Alt = "Test image",
                                             Image = blob,
                                         }
