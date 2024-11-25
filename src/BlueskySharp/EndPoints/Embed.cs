@@ -5,7 +5,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using static System.Net.Mime.MediaTypeNames;
 
-namespace BlueskySharp.EndPoints
+namespace BlueskySharp.Endpoints
 {
     public class Embed
     {
@@ -48,3 +48,4 @@ namespace BlueskySharp.EndPoints
         }
     }
 }
+

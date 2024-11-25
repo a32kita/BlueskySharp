@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace BlueskySharp.EndPoints
+namespace BlueskySharp.Endpoints
 {
     public class AspectRatio
     {
@@ -19,3 +19,4 @@ namespace BlueskySharp.EndPoints
         }
     }
 }
+

@@ -6,9 +6,9 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace BlueskySharp.EndPoints.Server
+namespace BlueskySharp.Endpoints.Server
 {
-    public class ServerEndpoint : EndPointBase
+    public class ServerEndpoint : EndpointBase
     {
         internal ServerEndpoint(BlueskyService parent)
             : base(parent)
@@ -36,3 +36,5 @@ namespace BlueskySharp.EndPoints.Server
         }
     }
 }
+
+

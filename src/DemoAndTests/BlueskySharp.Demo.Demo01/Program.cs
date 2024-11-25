@@ -26,33 +26,33 @@ namespace BlueskySharp.Demo.Demo01
                     break;
 
                 // 画像のアップロード
-                EndPoints.Blob? blob = null;
+                Endpoints.Blob? blob = null;
                 using (var testImageStream = File.OpenRead("TestImage.png"))
                 {
-                    var uploadResult = service.Repo.UploadBlobAsync(new EndPoints.Repo.UploadBlobContent("image/png", testImageStream)).Result;
+                    var uploadResult = service.Repo.UploadBlobAsync(new Endpoints.Repo.UploadBlobContent("image/png", testImageStream)).Result;
                     blob = uploadResult?.Blob;
                 }
 
 #if true
                 // com.atproto.repo.createRecord を使った方法
 
-                var postParam = new EndPoints.Repo.CreateRecordParam()
+                var postParam = new Endpoints.Repo.CreateRecordParam()
                 {
                     Repo = handle,
                     Collection = "app.bsky.feed.post",
-                    Record = new EndPoints.Record()
+                    Record = new Endpoints.Record()
                     {
                         Text = "TEST POST: " + message + " (" + DateTimeOffset.Now.ToString() + ")",
                         CreatedAt = DateTimeOffset.Now,
-                        Embed = new EndPoints.Embed()
+                        Embed = new Endpoints.Embed()
                         {
 
                             Type = "app.bsky.embed.images",
-                            Images = new EndPoints.AttachedImage[]
+                            Images = new Endpoints.AttachedImage[]
                             {
-                                new EndPoints.AttachedImage()
+                                new Endpoints.AttachedImage()
                                 {
-                                    //AspectRatio = new EndPoints.AspectRatio() { Width = 525, Height = 280 },
+                                    //AspectRatio = new Endpoints.AspectRatio() { Width = 525, Height = 280 },
                                     Alt = "Test image",
                                     Image = blob,
                                 }
@@ -65,28 +65,28 @@ namespace BlueskySharp.Demo.Demo01
 #else
                 // com.atproto.repo.applyWrites を使った方法
 
-                var writeParam = new EndPoints.Repo.ApplyWritesParam()
+                var writeParam = new Endpoints.Repo.ApplyWritesParam()
                 {
                     Repo = handle,
                     Validate = true,
-                    Writes = new EndPoints.Write[]
+                    Writes = new Endpoints.Write[]
                     {
-                        new EndPoints.Write()
+                        new Endpoints.Write()
                         {
                             Type = "com.atproto.repo.applyWrites#create",
                             Collection = "app.bsky.feed.post",
-                            Value = new EndPoints.Record()
+                            Value = new Endpoints.Record()
                             {
                                 Text = "TEST POST (W): " + message + " (" + DateTimeOffset.Now.ToString() + ")",
                                 CreatedAt = DateTimeOffset.Now,
-                                Embed = new EndPoints.Embed()
+                                Embed = new Endpoints.Embed()
                                 {
                                     Type = "app.bsky.embed.images",
-                                    Images = new EndPoints.AttachedImage[]
+                                    Images = new Endpoints.AttachedImage[]
                                     {
-                                        new EndPoints.AttachedImage()
+                                        new Endpoints.AttachedImage()
                                         {
-                                            //AspectRatio = new EndPoints.AspectRatio() { Width = 525, Height = 280 },
+                                            //AspectRatio = new Endpoints.AspectRatio() { Width = 525, Height = 280 },
                                             Alt = "Test image",
                                             Image = blob,
                                         }
@@ -105,15 +105,15 @@ namespace BlueskySharp.Demo.Demo01
                 var md = "こんにちは！これはリンク埋め込みのテストです。\n\nこれは [GitHub へのリンク](https://github.com/) です。見えますか？";
                 //md = "hello, this is test post. This is [Link to GitHub](https://github.com/). Can you see?";
 
-                var recordFromMd = EndPoints.Record.FromMarkdownText(md + "\n\n" + Guid.NewGuid());
-                recordFromMd.Embed = EndPoints.Embed.FromExternal(new EndPoints.ExternalReference()
+                var recordFromMd = Endpoints.Record.FromMarkdownText(md + "\n\n" + Guid.NewGuid());
+                recordFromMd.Embed = Endpoints.Embed.FromExternal(new Endpoints.ExternalReference()
                 {
                     Title = "Hoge hoge Web site",
                     Description = "hoge foo bar",
                     Uri = new Uri("https://www.a32kita.net")
                 });
 
-                var postParam2 = new EndPoints.Repo.CreateRecordParam()
+                var postParam2 = new Endpoints.Repo.CreateRecordParam()
                 {
                     Repo = handle,
                     Collection = "app.bsky.feed.post",
@@ -129,3 +129,4 @@ namespace BlueskySharp.Demo.Demo01
         }
     }
 }
+

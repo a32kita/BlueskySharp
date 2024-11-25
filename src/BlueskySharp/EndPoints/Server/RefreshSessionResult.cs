@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace BlueskySharp.EndPoints.Server
+namespace BlueskySharp.Endpoints.Server
 {
     public class RefreshSessionResult
     {
@@ -37,3 +37,4 @@ namespace BlueskySharp.EndPoints.Server
         }
     }
 }
+

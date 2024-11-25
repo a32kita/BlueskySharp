@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace BlueskySharp.EndPoints.InternalHelpers
+namespace BlueskySharp.Endpoints.InternalHelpers
 {
     internal class MarkdownParseResult
     {
@@ -93,3 +93,4 @@ namespace BlueskySharp.EndPoints.InternalHelpers
         }
     }
 }
+

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace BlueskySharp.EndPoints.Repo
+namespace BlueskySharp.Endpoints.Repo
 {
     public class ApplyWritesParam
     {
@@ -25,3 +25,4 @@ namespace BlueskySharp.EndPoints.Repo
         }
     }
 }
+

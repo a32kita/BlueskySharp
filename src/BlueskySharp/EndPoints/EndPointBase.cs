@@ -11,9 +11,9 @@ using System.Threading.Tasks;
 
 using BlueskySharp.CustomCovertersAndPolicies;
 
-namespace BlueskySharp.EndPoints
+namespace BlueskySharp.Endpoints
 {
-    public abstract class EndPointBase
+    public abstract class EndpointBase
     {
         internal static readonly JsonSerializerOptions DefaultJsonSerializerOption
             = new JsonSerializerOptions() {
@@ -51,7 +51,7 @@ namespace BlueskySharp.EndPoints
         }
 
 
-        protected EndPointBase(BlueskyService parent)
+        protected EndpointBase(BlueskyService parent)
         {
             this._parent = parent;
         }
@@ -175,3 +175,5 @@ namespace BlueskySharp.EndPoints
         }
     }
 }
+
+

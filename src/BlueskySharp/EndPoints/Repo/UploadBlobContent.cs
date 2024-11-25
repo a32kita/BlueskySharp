@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace BlueskySharp.EndPoints.Repo
+namespace BlueskySharp.Endpoints.Repo
 {
     public class UploadBlobContent : IDisposable
     {
@@ -46,3 +46,4 @@ namespace BlueskySharp.EndPoints.Repo
         }
     }
 }
+

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.Json.Serialization;
 
-namespace BlueskySharp.EndPoints
+namespace BlueskySharp.Endpoints
 {
     public class Ref
     {
@@ -15,3 +15,4 @@ namespace BlueskySharp.EndPoints
         }
     }
 }
+

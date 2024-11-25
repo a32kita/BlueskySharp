@@ -4,9 +4,9 @@ using System.Text;
 using System.Text.Json.Serialization;
 
 using BlueskySharp.CustomCovertersAndPolicies;
-using BlueskySharp.EndPoints.InternalHelpers;
+using BlueskySharp.Endpoints.InternalHelpers;
 
-namespace BlueskySharp.EndPoints
+namespace BlueskySharp.Endpoints
 {
     public class Record
     {
@@ -49,3 +49,4 @@ namespace BlueskySharp.EndPoints
         }
     }
 }
+

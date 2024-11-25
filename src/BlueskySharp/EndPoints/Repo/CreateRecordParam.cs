@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace BlueskySharp.EndPoints.Repo
+namespace BlueskySharp.Endpoints.Repo
 {
     public class CreateRecordParam
     {
@@ -43,3 +43,4 @@ namespace BlueskySharp.EndPoints.Repo
         }
     }
 }
+

@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BlueskySharp.EndPoints.Repo
+namespace BlueskySharp.Endpoints.Repo
 {
-    public class RepoEndpoint : EndPointBase
+    public class RepoEndpoint : EndpointBase
     {
         internal RepoEndpoint(BlueskyService parent)
             : base(parent)
@@ -40,3 +40,5 @@ namespace BlueskySharp.EndPoints.Repo
         }
     }
 }
+
+

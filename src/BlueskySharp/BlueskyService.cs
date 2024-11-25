@@ -1,5 +1,5 @@
-﻿using BlueskySharp.EndPoints.Repo;
-using BlueskySharp.EndPoints.Server;
+﻿using BlueskySharp.Endpoints.Repo;
+using BlueskySharp.Endpoints.Server;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -122,3 +122,4 @@ namespace BlueskySharp
         }
     }
 }
+
