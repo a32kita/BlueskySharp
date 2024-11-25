@@ -1,28 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Text.Json.Serialization;
-
-using BlueskySharp.CustomCovertersAndPolicies;
 
 namespace BlueskySharp.EndPoints
 {
-    public class Record
+    public class AttachedImage
     {
-        public string Text
+        public string Alt
         {
             get;
             set;
         }
 
-        [JsonConverter(typeof(CustomDateTimeOffsetConverter))]
-        public DateTimeOffset CreatedAt
+        public AspectRatio AspectRatio
         {
             get;
             set;
         }
 
-        public Embed Embed
+        public Blob Image
         {
             get;
             set;

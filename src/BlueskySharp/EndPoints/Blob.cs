@@ -3,26 +3,30 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.Json.Serialization;
 
-using BlueskySharp.CustomCovertersAndPolicies;
-
 namespace BlueskySharp.EndPoints
 {
-    public class Record
+    public class Blob
     {
-        public string Text
+        [JsonPropertyName("$type")]
+        public string Type
+        {
+            get;
+            set;
+        } = "blob";
+
+        public string MimeType
         {
             get;
             set;
         }
 
-        [JsonConverter(typeof(CustomDateTimeOffsetConverter))]
-        public DateTimeOffset CreatedAt
+        public Ref Ref
         {
             get;
             set;
         }
 
-        public Embed Embed
+        public long Size
         {
             get;
             set;
