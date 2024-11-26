@@ -29,7 +29,7 @@ namespace BlueskySharp.Demo.Demo01
                 Endpoints.Blob? blob = null;
                 using (var testImageStream = File.OpenRead("TestImage.png"))
                 {
-                    var uploadResult = service.Repo.UploadBlobAsync(new Endpoints.Repo.UploadBlobContent("image/png", testImageStream)).Result;
+                    var uploadResult = service.Repo.UploadBlobAsync(new("image/png", testImageStream)).Result;
                     blob = uploadResult?.Blob;
                 }
 
@@ -40,23 +40,23 @@ namespace BlueskySharp.Demo.Demo01
                 {
                     Repo = handle,
                     Collection = "app.bsky.feed.post",
-                    Record = new Endpoints.Record()
+                    Record = new()
                     {
                         Text = "TEST POST: " + message + " (" + DateTimeOffset.Now.ToString() + ")",
                         CreatedAt = DateTimeOffset.Now,
-                        Embed = new Endpoints.Embed()
+                        Embed = new()
                         {
 
                             Type = "app.bsky.embed.images",
-                            Images = new Endpoints.AttachedImage[]
-                            {
-                                new Endpoints.AttachedImage()
+                            Images =
+                            [
+                                // Specify image blob
+                                new()
                                 {
-                                    //AspectRatio = new Endpoints.AspectRatio() { Width = 525, Height = 280 },
                                     Alt = "Test image",
                                     Image = blob,
                                 }
-                            }
+                            ]
                         }
                     }
                 };
@@ -69,38 +69,37 @@ namespace BlueskySharp.Demo.Demo01
                 {
                     Repo = handle,
                     Validate = true,
-                    Writes = new Endpoints.Write[]
-                    {
-                        new Endpoints.Write()
+                    Writes =
+                    [
+                        new()
                         {
                             Type = "com.atproto.repo.applyWrites#create",
                             Collection = "app.bsky.feed.post",
-                            Value = new Endpoints.Record()
+                            Value = new()
                             {
                                 Text = "TEST POST (W): " + message + " (" + DateTimeOffset.Now.ToString() + ")",
                                 CreatedAt = DateTimeOffset.Now,
-                                Embed = new Endpoints.Embed()
+                                Embed = new()
                                 {
                                     Type = "app.bsky.embed.images",
-                                    Images = new Endpoints.AttachedImage[]
-                                    {
-                                        new Endpoints.AttachedImage()
+                                    Images =
+                                    [
+                                        new()
                                         {
-                                            //AspectRatio = new Endpoints.AspectRatio() { Width = 525, Height = 280 },
                                             Alt = "Test image",
                                             Image = blob,
                                         }
-                                    }
+                                    ]
                                 }
                             }
                         }
-                    }
+                    ]
                 };
 
                 var result = service.Repo.ApplyWrites(writeParam).Result;
 #endif
 
-#if true
+#if false
                 // Markdown 記法の利用
                 var md = "こんにちは！これはリンク埋め込みのテストです。\n\nこれは [GitHub へのリンク](https://github.com/) です。見えますか？";
                 //md = "hello, this is test post. This is [Link to GitHub](https://github.com/). Can you see?";
