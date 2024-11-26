@@ -118,6 +118,43 @@ namespace BlueskySharp.Endpoints
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="TParam"></typeparam>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="path"></param>
+        /// <param name="param"></param>
+        /// <param name="onSession"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        protected async Task<TResult> ExecuteQuery<TParam, TResult>(string path, TParam param = default(TParam), bool onSession = true)
+        {
+            var fullUri = this.ServiceInfo.GetFullUri(path);
+            var queryParameter = String.Empty;
+            if (param is EmptyParam == false)
+                queryParameter = InternalHelpers.UrlParameterConverter.ToUrlParameters(param);
+
+            var uriBuilder = new UriBuilder(fullUri);
+            if (String.IsNullOrEmpty(queryParameter) == false)
+                uriBuilder.Query = queryParameter;
+
+            var fullUriWithQueryParameter = uriBuilder.Uri;
+            using (var hRequest = new HttpRequestMessage(HttpMethod.Get, fullUriWithQueryParameter))
+            {
+                if (onSession)
+                {
+                    var token = this.SessionInfo?.AccessJwt;
+                    if (String.IsNullOrEmpty(token))
+                        throw new Exception("AccessJwt is empty.");
+                    hRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                }
+
+                using (var hResponse = await this.HttpClient.SendAsync(hRequest))
+                    return await this.LoadResponseAsync<TResult>(hResponse);
+            }
+        }
+
+        /// <summary>
         /// Executes a remote procedure.
         /// </summary>
         /// <typeparam name="TParam"></typeparam>
@@ -181,37 +218,46 @@ namespace BlueskySharp.Endpoints
                         }
 
                         using (var hResponse = await this.HttpClient.SendAsync(hRequest))
-                        {
-#if DEBUG && false
-                            var responseJson = await hResponse.Content.ReadAsStringAsync();
-
-                            TResult deserializedResult = default(TResult);
-                            try
-                            {
-                                deserializedResult = JsonSerializer.Deserialize<TResult>(responseJson, DefaultJsonSerializerOption);
-                            }
-                            catch (Exception ex)
-                            {
-                                throw ex;
-                            }
-
-                            if ((int)hResponse.StatusCode / 100 != 2)
-                                hResponse.EnsureSuccessStatusCode();
-
-                            return deserializedResult;
-#else
-                            hResponse.EnsureSuccessStatusCode();
-
-                            using (var hResponseContentStream = await hResponse.Content.ReadAsStreamAsync())
-                            {
-                                var deserializedResult = JsonSerializer.Deserialize<TResult>(hResponseContentStream, DefaultJsonSerializerOption);
-                                return deserializedResult;
-                            }
-#endif
-                        }
+                            return await this.LoadResponseAsync<TResult>(hResponse);
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="hResponse"></param>
+        /// <returns></returns>
+        protected async Task<TResult> LoadResponseAsync<TResult>(HttpResponseMessage hResponse)
+        {
+#if DEBUG && false
+            var responseJson = await hResponse.Content.ReadAsStringAsync();
+
+            TResult deserializedResult = default(TResult);
+            try
+            {
+                deserializedResult = JsonSerializer.Deserialize<TResult>(responseJson, DefaultJsonSerializerOption);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+            if ((int)hResponse.StatusCode / 100 != 2)
+                hResponse.EnsureSuccessStatusCode();
+
+            return deserializedResult;
+#else
+            hResponse.EnsureSuccessStatusCode();
+
+            using (var hResponseContentStream = await hResponse.Content.ReadAsStreamAsync())
+            {
+                var deserializedResult = JsonSerializer.Deserialize<TResult>(hResponseContentStream, DefaultJsonSerializerOption);
+                return deserializedResult;
+            }
+#endif
         }
     }
 }

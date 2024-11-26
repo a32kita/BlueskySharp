@@ -37,24 +37,34 @@ namespace BlueskySharp.Endpoints.Repo
             return await this.InvokeProcedureAsync<CreateRecordParam, CreateRecordResult>("xrpc/com.atproto.repo.createRecord", param);
         }
 
-        /// <summary>
-        /// Delete a repository record, or ensure it doesn't exist. Requires auth, implemented by PDS.
-        /// </summary>
-        /// <param name="param"></param>
-        /// <returns></returns>
-        public async Task<CommitMeta> DeleteRecordAsync(DeleteRecordParam param)
-        {
-            return await this.InvokeProcedureAsync<DeleteRecordParam, CommitMeta>("xrpc/com.atproto.repo.deleteRecord", param);
-        }
+        ///// <summary>
+        ///// Delete a repository record, or ensure it doesn't exist. Requires auth, implemented by PDS.
+        ///// </summary>
+        ///// <param name="param"></param>
+        ///// <returns></returns>
+        //public async Task<CommitMeta> DeleteRecordAsync(DeleteRecordParam param)
+        //{
+        //    return await this.InvokeProcedureAsync<DeleteRecordParam, CommitMeta>("xrpc/com.atproto.repo.deleteRecord", param);
+        //}
+
+        ///// <summary>
+        ///// Get a single record from a repository. Does not require auth.
+        ///// </summary>
+        ///// <param name="param"></param>
+        ///// <returns></returns>
+        //public async Task<GetRecordResult> GetRecordAsync(GetRecordParam param)
+        //{
+        //    return await this.InvokeProcedureAsync<GetRecordParam, GetRecordResult>("xrpc/com.atproto.repo.getRecord", param);
+        //}
 
         /// <summary>
-        /// Get a single record from a repository. Does not require auth.
+        /// List a range of records in a repository, matching a specific collection. Does not require auth.
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        public async Task<GetRecordResult> GetRecordAsync(GetRecordParam param)
+        public async Task<ListRecordsResult> ListRecordsAsync(ListRecordsParam param)
         {
-            return await this.InvokeProcedureAsync<GetRecordParam, GetRecordResult>("xrpc/com.atproto.repo.getRecord", param);
+            return await this.ExecuteQuery<ListRecordsParam, ListRecordsResult>("xrpc/com.atproto.repo.listRecords", param);
         }
 
         /// <summary>

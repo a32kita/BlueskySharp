@@ -17,6 +17,20 @@ namespace BlueskySharp.Demo.Demo01
                 new BlueskyLoginInfo() { Handle = handle, Password = password }).Result;
 
             Console.WriteLine("Login is success !!");
+            Console.WriteLine("Get records ...");
+
+            var listRecordsResult = service.Repo.ListRecordsAsync(new()
+            {
+                Repo = handle,
+                Collection = "app.bsky.feed.post",
+                Limit = 10,
+            }).Result;
+
+            foreach (var record in listRecordsResult.Records)
+            {
+                var recordValue = record.Value;
+                Console.WriteLine("{0}: {1}", recordValue.CreatedAt.ToString("yyyy/MM/dd HH:mm:ss"), recordValue.Text);
+            }
 
             while (true)
             {
