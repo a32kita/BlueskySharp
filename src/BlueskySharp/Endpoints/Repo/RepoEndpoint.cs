@@ -38,6 +38,26 @@ namespace BlueskySharp.Endpoints.Repo
         }
 
         /// <summary>
+        /// Delete a repository record, or ensure it doesn't exist. Requires auth, implemented by PDS.
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public async Task<CommitMeta> DeleteRecordAsync(DeleteRecordParam param)
+        {
+            return await this.InvokeProcedureAsync<DeleteRecordParam, CommitMeta>("xrpc/com.atproto.repo.deleteRecord", param);
+        }
+
+        /// <summary>
+        /// Get a single record from a repository. Does not require auth.
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public async Task<GetRecordResult> GetRecordAsync(GetRecordParam param)
+        {
+            return await this.InvokeProcedureAsync<GetRecordParam, GetRecordResult>("xrpc/com.atproto.repo.getRecord", param);
+        }
+
+        /// <summary>
         /// Upload a new blob, to be referenced from a repository record. The blob will be deleted if it is not referenced within a time window (eg, minutes). Blob restrictions (mimetype, size, etc) are enforced when the reference is created. Requires auth, implemented by PDS.
         /// </summary>
         /// <param name="content"></param>
@@ -45,6 +65,22 @@ namespace BlueskySharp.Endpoints.Repo
         public async Task<UploadBlobResult> UploadBlobAsync(UploadBlobContent content)
         {
             return await this.UploadContentAsync<UploadBlobResult>("xrpc/com.atproto.repo.uploadBlob", content.MimeType, content.ContentStream);
+        }
+
+
+        public class CommitMeta
+        {
+            public string Cid
+            {
+                get;
+                set;
+            }
+
+            public string Rev
+            {
+                get;
+                set;
+            }
         }
     }
 }
