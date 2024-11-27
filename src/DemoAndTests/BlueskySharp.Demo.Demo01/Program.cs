@@ -29,8 +29,11 @@ namespace BlueskySharp.Demo.Demo01
             foreach (var record in listRecordsResult.Records)
             {
                 var recordValue = record.Value;
-                Console.WriteLine("{0}: {1}", recordValue.CreatedAt.ToString("yyyy/MM/dd HH:mm:ss"), recordValue.Text);
+                Console.WriteLine("{0}: {1}", recordValue.CreatedAt.ToString("yyyy/MM/dd HH:mm:ss"), recordValue.Text.Replace("\n", "\\n"));
             }
+
+            // ログアウトのテスト
+            //service.Server.DeleteSessionAsync().Wait();
 
             while (true)
             {

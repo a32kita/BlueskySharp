@@ -181,7 +181,7 @@ namespace BlueskySharp.Endpoints
             {
                 if (param is EmptyParam == false)
                 {
-#if DEBUG && false
+#if DEBUG && true
                     var jsonString = JsonSerializer.Serialize(param, DefaultJsonSerializerOption);
 
                     using (var sw = new StreamWriter(ms, UTF8WithOutBOMEncoding, 512, true))
@@ -232,32 +232,36 @@ namespace BlueskySharp.Endpoints
         /// <returns></returns>
         protected async Task<TResult> LoadResponseAsync<TResult>(HttpResponseMessage hResponse)
         {
-#if DEBUG && false
-            var responseJson = await hResponse.Content.ReadAsStringAsync();
-
-            TResult deserializedResult = default(TResult);
             try
             {
-                deserializedResult = JsonSerializer.Deserialize<TResult>(responseJson, DefaultJsonSerializerOption);
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-
-            if ((int)hResponse.StatusCode / 100 != 2)
                 hResponse.EnsureSuccessStatusCode();
-
-            return deserializedResult;
-#else
-            hResponse.EnsureSuccessStatusCode();
-
-            using (var hResponseContentStream = await hResponse.Content.ReadAsStreamAsync())
-            {
-                var deserializedResult = JsonSerializer.Deserialize<TResult>(hResponseContentStream, DefaultJsonSerializerOption);
-                return deserializedResult;
             }
-#endif
+            catch (Exception)
+            {
+                var responseJson = await hResponse.Content.ReadAsStringAsync();
+                try
+                {
+                    var errorResult = JsonSerializer.Deserialize<ErrorResult>(responseJson, DefaultJsonSerializerOption);
+                    throw new BlueskySharpErrorException(responseJson, errorResult);
+                }
+                catch
+                {
+                    throw new BlueskySharpErrorException(responseJson, String.Empty, String.Empty);
+                }
+            }
+
+            if (typeof(TResult).Equals(typeof(EmptyResult)))
+            {
+                return (TResult)(Object)EmptyResult.Instance;
+            }
+            else
+            {
+                using (var hResponseContentStream = await hResponse.Content.ReadAsStreamAsync())
+                {
+                    var deserializedResult = JsonSerializer.Deserialize<TResult>(hResponseContentStream, DefaultJsonSerializerOption);
+                    return deserializedResult;
+                }
+            }
         }
     }
 }
