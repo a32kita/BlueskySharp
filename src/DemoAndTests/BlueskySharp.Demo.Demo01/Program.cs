@@ -1,4 +1,6 @@
 ﻿
+using BlueskySharp.Endpoints;
+
 namespace BlueskySharp.Demo.Demo01
 {
     internal class Program
@@ -19,6 +21,7 @@ namespace BlueskySharp.Demo.Demo01
             Console.WriteLine("Login is success !!");
             Console.WriteLine("Get records ...");
 
+            // レコード一括取得テスト
             var listRecordsResult = service.Repo.ListRecordsAsync(new()
             {
                 Repo = handle,
@@ -32,8 +35,36 @@ namespace BlueskySharp.Demo.Demo01
                 Console.WriteLine("{0}: {1}", recordValue.CreatedAt.ToString("yyyy/MM/dd HH:mm:ss"), recordValue.Text.Replace("\n", "\\n"));
             }
 
+            // 単一レコード取得テスト
+            var getRecordResult = service.Repo.GetRecordAsync(new()
+            {
+                Repo = "a32kita.net",
+                Collection = "app.bsky.feed.post",
+                Rkey = "3lbwng4waus2k",
+            }).Result;
+
+
             // ログアウトのテスト
-            //service.Server.DeleteSessionAsync().Wait();
+            //try
+            //{
+            //    service.Server.DeleteSessionAsync().Wait();
+            //}
+            //catch (AggregateException aex)
+            //{
+            //    var ex = aex.InnerException as BlueskySharpErrorException;
+            //    if (ex == null)
+            //        throw;
+
+            //    Console.WriteLine("Logout error: {0}, {1}", ex.Error, ex.ErrorMessage);
+            //    Console.WriteLine(ex.SourceJson);
+            //    Console.ReadLine();
+            //}
+            //catch (BlueskySharpErrorException ex)
+            //{
+            //    Console.WriteLine("Logout error: {0}, {1}", ex.Error, ex.ErrorMessage);
+            //    Console.WriteLine(ex.SourceJson);
+            //    Console.ReadLine();
+            //}
 
             while (true)
             {

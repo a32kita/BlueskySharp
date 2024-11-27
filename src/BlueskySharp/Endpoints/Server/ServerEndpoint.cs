@@ -41,7 +41,7 @@ namespace BlueskySharp.Endpoints.Server
         /// <returns></returns>
         public async Task DeleteSessionAsync()
         {
-            await this.InvokeProcedureAsync<EmptyParam, EmptyResult>("xrpc/com.atproto.server.deleteSession", EmptyParam.Instance);
+            await this.InvokeProcedureAsync<EmptyParam, EmptyResult>("xrpc/com.atproto.server.deleteSession", EmptyParam.Instance, false, this.SessionInfo.RefreshJwt, false);
         }
     }
 }

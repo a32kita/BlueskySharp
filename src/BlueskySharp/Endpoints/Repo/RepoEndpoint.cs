@@ -47,15 +47,15 @@ namespace BlueskySharp.Endpoints.Repo
         //    return await this.InvokeProcedureAsync<DeleteRecordParam, CommitMeta>("xrpc/com.atproto.repo.deleteRecord", param);
         //}
 
-        ///// <summary>
-        ///// Get a single record from a repository. Does not require auth.
-        ///// </summary>
-        ///// <param name="param"></param>
-        ///// <returns></returns>
-        //public async Task<GetRecordResult> GetRecordAsync(GetRecordParam param)
-        //{
-        //    return await this.InvokeProcedureAsync<GetRecordParam, GetRecordResult>("xrpc/com.atproto.repo.getRecord", param);
-        //}
+        /// <summary>
+        /// Get a single record from a repository. Does not require auth.
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public async Task<GetRecordResult> GetRecordAsync(GetRecordParam param)
+        {
+            return await this.ExecuteQuery<GetRecordParam, GetRecordResult>("xrpc/com.atproto.repo.getRecord", param);
+        }
 
         /// <summary>
         /// List a range of records in a repository, matching a specific collection. Does not require auth.

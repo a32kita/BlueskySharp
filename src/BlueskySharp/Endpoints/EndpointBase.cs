@@ -181,7 +181,7 @@ namespace BlueskySharp.Endpoints
             {
                 if (param is EmptyParam == false)
                 {
-#if DEBUG && true
+#if DEBUG && false
                     var jsonString = JsonSerializer.Serialize(param, DefaultJsonSerializerOption);
 
                     using (var sw = new StreamWriter(ms, UTF8WithOutBOMEncoding, 512, true))
@@ -252,15 +252,23 @@ namespace BlueskySharp.Endpoints
 
             if (typeof(TResult).Equals(typeof(EmptyResult)))
             {
+#if false
+                var jsonString = await hResponse.Content.ReadAsStringAsync();
+#endif
                 return (TResult)(Object)EmptyResult.Instance;
             }
             else
             {
+#if false
+                var jsonString = await hResponse.Content.ReadAsStringAsync();
+                return JsonSerializer.Deserialize<TResult>(jsonString, DefaultJsonSerializerOption);
+#else
                 using (var hResponseContentStream = await hResponse.Content.ReadAsStreamAsync())
                 {
                     var deserializedResult = JsonSerializer.Deserialize<TResult>(hResponseContentStream, DefaultJsonSerializerOption);
                     return deserializedResult;
                 }
+#endif
             }
         }
     }
