@@ -9,6 +9,9 @@ namespace BlueskySharp.Endpoints.InternalHelpers
     {
         public static string ToUrlParameters(object obj, string prefix = null)
         {
+            if (obj == null)
+                throw new ArgumentNullException(nameof(obj));
+
             var properties = obj.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public);
             var parameters = new List<string>();
 

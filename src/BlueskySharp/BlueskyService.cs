@@ -1,4 +1,5 @@
-﻿using BlueskySharp.Endpoints.Repo;
+﻿using BlueskySharp.Endpoints.BskyActor;
+using BlueskySharp.Endpoints.Repo;
 using BlueskySharp.Endpoints.Server;
 using System;
 using System.Collections.Generic;
@@ -52,6 +53,15 @@ namespace BlueskySharp
             private set;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public BskyActorEndpoint BskyActor
+        {
+            get;
+            private set;
+        }
+
 
         internal HttpClient HttpClient
         {
@@ -85,6 +95,9 @@ namespace BlueskySharp
 
             this.Repo = new RepoEndpoint(this);
             this.Repo.Calling += this._onApiCalling;
+
+            this.BskyActor = new BskyActorEndpoint(this);
+            this.BskyActor.Calling += this._onApiCalling;
         }
 
 
