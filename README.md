@@ -5,9 +5,9 @@ It is recommended to install the package from NuGet when using it in a .NET appl
 [NuGet -  BlueskySharp](https://www.nuget.org/packages/BlueskySharp/)
 
 ## 1. Get started
-This section introduces how to log in to CryPlanet and make actual posts.
+This section introduces how to log in to Bluesky and make actual posts.
 
-### 1 - 1. Log in to CryPlanet using an application password
+### 1 - 1. Log in to Bluesky using an application password
 Log in to the [bsky.app](https://bsky.app/) and issue an "App Password" from the account security menu. Logging in from the application is done using the handle name and application password.
 
 ```csharp
