@@ -311,5 +311,35 @@ namespace BlueskySharp.Test.UnitTest101
             }
         }
 #endif
+
+#if true
+        [TestMethod]
+        public async Task BskyActor_GetProfile()
+        {
+            await this._createCommonSession();
+            if (this._bskyService == null)
+                throw new InvalidOperationException();
+
+            try
+            {
+                var profile = await this._bskyService.BskyActor.GetProfileAsync(new()
+                {
+                    Actor = "a32kita.net"
+                });
+
+                Assert.IsNotNull(profile, "profile is null");
+                Assert.AreEqual(profile.Handle, "a32kita.net", false, $"Handle is not 'a32kita.net' ({profile.Handle}).");
+                Assert.AreEqual(profile.Did, "did:plc:razh7yhowxfxzxswdkerdbhf", false, $"Handle is not 'did:plc:razh7yhowxfxzxswdkerdbhf' ({profile.Handle}).");
+            }
+            catch (Exception ex)
+            {
+                TestHelper.AssertAndOutputExceptionDetail(ex);
+            }
+            finally
+            {
+                await this._wait();
+            }
+        }
+#endif
     }
 }
