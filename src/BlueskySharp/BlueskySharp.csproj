@@ -1,0 +1,54 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+	<Deterministic>false</Deterministic>
+	<GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
+	<GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
+	<GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
+	  
+	<Company>Explorers of the Binary World / a32kita</Company>
+	<Authors>Explorers of the Binary World / a32kita</Authors>
+	<Copyright>Copyright (c) 2024 Explorers of the Binary World, All Rights Reserved.</Copyright>
+	<PackageProjectUrl>https://github.com/a32kita/BlueskySharp</PackageProjectUrl>
+	<PackageReadmeFile>README.md</PackageReadmeFile>
+	<RepositoryUrl>https://github.com/a32kita/BlueskySharp</RepositoryUrl>
+	<PackageTags>Bluesky; SNS;</PackageTags>
+	<Title>$(AssemblyName)</Title>
+	<Version></Version>
+	<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+	<GenerateDocumentationFile>True</GenerateDocumentationFile>
+	<PackageLicenseFile>LICENSE</PackageLicenseFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="..\..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.2.1" />
+    <PackageReference Include="System.Text.Json" Version="8.0.5" />
+  </ItemGroup>
+
+	<Target Name="GenerateCustomVersion" BeforeTargets="BeforeBuild">
+		<PropertyGroup>
+			<BuildVersion>$([System.DateTime]::Now.ToString('0.yy.M.dHH'))</BuildVersion>
+			<PackageVersion>$([System.DateTime]::Now.ToString('0.yy.M.dHH'))-beta-$([System.DateTime]::Now.ToString('mmss'))$([System.Guid]::NewGuid.ToString().Replace("-", "").Substring(0, 5))</PackageVersion>
+		</PropertyGroup>
+		<ItemGroup>
+			<AssemblyAttribute Include="System.Reflection.AssemblyVersionAttribute">
+				<_Parameter1>$(BuildVersion)</_Parameter1>
+			</AssemblyAttribute>
+			<AssemblyAttribute Include="System.Reflection.AssemblyFileVersionAttribute">
+				<_Parameter1>$(BuildVersion)</_Parameter1>
+			</AssemblyAttribute>
+		</ItemGroup>
+	</Target>
+</Project>
