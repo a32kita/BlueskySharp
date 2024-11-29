@@ -239,15 +239,18 @@ namespace BlueskySharp.Endpoints
             catch (Exception)
             {
                 var responseJson = await hResponse.Content.ReadAsStringAsync();
+                ErrorResult errorResult;
+
                 try
                 {
-                    var errorResult = JsonSerializer.Deserialize<ErrorResult>(responseJson, DefaultJsonSerializerOption);
-                    throw new BlueskySharpErrorException(responseJson, errorResult);
+                    errorResult = JsonSerializer.Deserialize<ErrorResult>(responseJson, DefaultJsonSerializerOption);
                 }
                 catch
                 {
                     throw new BlueskySharpErrorException(responseJson, String.Empty, String.Empty);
                 }
+
+                throw new BlueskySharpErrorException(responseJson, errorResult);
             }
 
             if (typeof(TResult).Equals(typeof(EmptyResult)))

@@ -6,13 +6,18 @@ using System.Text;
 
 namespace BlueskySharp
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class BlueskySessionInfo
     {
         private string _accessJwt;
         private string _refreshJwt;
 
 
-
+        /// <summary>
+        /// 
+        /// </summary>
         public string AccessJwt
         {
             get => this._accessJwt;
@@ -23,12 +28,18 @@ namespace BlueskySharp
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public DateTimeOffset AccessJwtExpiration
         {
             get;
             private set;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public string RefreshJwt
         {
             get => this._refreshJwt;
@@ -39,6 +50,9 @@ namespace BlueskySharp
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public DateTimeOffset RefreshJwtExpiration
         {
             get;
@@ -59,6 +73,20 @@ namespace BlueskySharp
                 return DateTimeOffset.FromUnixTimeSeconds(payload.Expiration.Value);
 
             throw new ArgumentException();
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public BlueskySessionInfo GetClone()
+        {
+            return new BlueskySessionInfo()
+            {
+                AccessJwt = this.AccessJwt,
+                RefreshJwt = this.RefreshJwt,
+            };
         }
     }
 }

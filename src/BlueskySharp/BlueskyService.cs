@@ -117,6 +117,15 @@ namespace BlueskySharp
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public BlueskySessionInfo GetSessionInfo()
+        {
+            return this.SessionInfo.GetClone();
+        }
+
+        /// <summary>
         /// Disposes of all resources used by the instance.
         /// </summary>
         public void Dispose()
