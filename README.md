@@ -41,7 +41,7 @@ var postResult = await bskySv.Repo.CreateRecordAsync(postParam);
 Retrieve the past posts of the logged-in account.
 
 ```csharp
-var listRecordsResult = await service.Repo.ListRecordsAsync(new()
+var listRecordsResult = await bskySv.Repo.ListRecordsAsync(new()
     {
         Repo = "ACCOUNT_HANDLE",
         Collection = "app.bsky.feed.post",
